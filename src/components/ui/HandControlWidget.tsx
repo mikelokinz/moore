@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
+import {
+  Hand,
+  Power,
+  X,
+  ChevronDown,
+  ChevronUp,
+  HelpCircle,
+  Video,
+  VideoOff,
+  Sparkles,
+} from 'lucide-react';
 import type { GestureType, TrackingStatus } from '../../hooks/useHandGesture';
 
 interface HandControlWidgetProps {
   isEnabled: boolean;
   onToggle: () => void;
+  onTurnOff?: () => void;
   status: TrackingStatus;
   gesture: GestureType;
   confidence: number;
@@ -14,239 +26,455 @@ interface HandControlWidgetProps {
 export function HandControlWidget({
   isEnabled,
   onToggle,
+  onTurnOff,
   status,
   gesture,
   confidence,
   videoRef,
   canvasRef,
 }: HandControlWidgetProps) {
-  const [showHelp, setShowHelp] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
 
+  const handleTurnOff = () => {
+    if (onTurnOff) {
+      onTurnOff();
+    } else {
+      onToggle();
+    }
+  };
+
+  // Status badge config
   const getStatusBadge = () => {
     if (!isEnabled) {
-      return { label: 'OFF', color: '#64748b', dot: '○' };
+      return { label: 'OFFLINE', color: '#94a3b8', bg: 'rgba(100, 116, 139, 0.2)', border: 'rgba(100, 116, 139, 0.35)', dot: '○' };
     }
     switch (status) {
       case 'loading':
-        return { label: 'INITIALIZING...', color: '#f59e0b', dot: '◌' };
+        return { label: 'INITIALIZING', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.2)', border: 'rgba(245, 158, 11, 0.4)', dot: '◌' };
       case 'ready':
       case 'tracking':
-        return { label: 'ACTIVE', color: '#22c55e', dot: '●' };
+        return { label: 'AI TRACKING', color: '#10b981', bg: 'rgba(16, 185, 129, 0.2)', border: 'rgba(16, 185, 129, 0.45)', dot: '●' };
       case 'permission_denied':
-        return { label: 'DENIED', color: '#ef4444', dot: '✕' };
+        return { label: 'CAMERA DENIED', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.2)', border: 'rgba(244, 63, 94, 0.45)', dot: '✕' };
       case 'unavailable':
       default:
-        return { label: 'UNAVAILABLE', color: '#64748b', dot: '○' };
+        return { label: 'UNAVAILABLE', color: '#94a3b8', bg: 'rgba(100, 116, 139, 0.2)', border: 'rgba(100, 116, 139, 0.35)', dot: '○' };
     }
   };
 
   const badge = getStatusBadge();
 
-  const getGestureLabel = () => {
+  // Gesture label with icon
+  const getGestureInfo = () => {
     switch (gesture) {
       case 'drag':
-        return 'ROTATING GLOBE';
+        return { label: 'ROTATING GLOBE', icon: '🖐', active: true };
       case 'pinch':
-        return 'ZOOMING';
+        return { label: 'ZOOMING GLOBE', icon: '🤏', active: true };
       case 'pan':
-        return 'PANNING';
+        return { label: 'PANNING CAMERA', icon: '✋', active: true };
       case 'fist':
-        return 'INTERACTION PAUSED';
+        return { label: 'INTERACTION PAUSED', icon: '✊', active: false };
       case 'palm':
-        return 'PALM DETECTED';
+        return { label: 'PALM DETECTED', icon: '🖐', active: true };
       default:
-        return 'MOVE HAND TO ROTATE';
+        return { label: 'MOVE HAND TO ORBIT', icon: '🖐', active: false };
     }
   };
 
+  const gestureInfo = getGestureInfo();
+
+  // When disabled, do not render any pill outside the menu (gesture toggled from Menu)
+  if (!isEnabled) {
+    return null;
+  }
+
+  // ── Expanded Gesture Control Box (Liquid Glass) ───────────────────────────
   return (
     <div
       style={{
         position: 'absolute',
-        bottom: '52px',
-        right: '16px',
+        bottom: '24px',
+        right: '24px',
         zIndex: 35,
+        width: '240px',
+        background: 'linear-gradient(145deg, rgba(6, 32, 28, 0.9) 0%, rgba(3, 20, 24, 0.95) 100%)',
+        backdropFilter: 'blur(30px) saturate(220%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(220%)',
+        border: '1px solid rgba(34, 211, 238, 0.45)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.75)',
+        borderRadius: '16px',
+        padding: '12px',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-end',
-        gap: '6px',
+        gap: '10px',
+        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.85), inset 0 1.5px 2px rgba(255, 255, 255, 0.4), 0 0 35px rgba(34, 211, 238, 0.25)',
+        color: '#f8fafc',
+        fontFamily: "'Space Grotesk', system-ui, sans-serif",
+        animation: 'slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      {/* Mini Help Popover */}
-      {showHelp && (
-        <div
-          style={{
-            background: 'rgba(2, 8, 20, 0.95)',
-            border: '1px solid rgba(34, 211, 238, 0.25)',
-            borderRadius: '6px',
-            padding: '10px 14px',
-            fontSize: '9px',
-            color: '#cbd5e1',
-            width: '220px',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.7)',
-            marginBottom: '4px',
-          }}
-        >
-          <div style={{ fontWeight: 700, color: isEnabled ? '#22d3ee' : '#64748b', letterSpacing: '0.14em', marginBottom: 6, fontSize: '8px' }}>
-            GESTURE TELEMETRY {!isEnabled && <span style={{ color: '#ef4444' }}>(PAUSED)</span>}
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', lineHeight: 1.4, opacity: isEnabled ? 1 : 0.45 }}>
-            <div><span style={{ color: '#38bdf8' }}>🖐 Right Open Hand:</span> Aim crosshair</div>
-            <div><span style={{ color: '#38bdf8' }}>✌ Left Air-Quote:</span> Select target marker</div>
-            <div><span style={{ color: '#38bdf8' }}>🤏 Two Hands:</span> Orbit & zoom Earth</div>
-            <div><span style={{ color: '#94a3b8' }}>🖱 Mouse & Touch:</span> Always available</div>
-          </div>
-        </div>
-      )}
-
-      {/* Main compact widget card */}
+      {/* ── Header Row: Icon, Title, Status & Turn Off Switch/Close ── */}
       <div
-        className="tactical-glass tactical-bracket-box font-hud"
         style={{
-          border: `1px solid ${isEnabled ? 'rgba(34, 211, 238, 0.45)' : 'rgba(255, 255, 255, 0.08)'}`,
-          borderRadius: '6px',
-          padding: '7px 12px',
           display: 'flex',
-          flexDirection: 'column',
-          gap: '6px',
-          width: isEnabled && (status === 'tracking' || status === 'ready') ? '160px' : 'auto',
-          boxShadow: isEnabled ? '0 0 20px rgba(34, 211, 238, 0.2)' : '0 4px 20px rgba(0, 0, 0, 0.6)',
-          transition: 'all 0.2s ease',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          paddingBottom: '8px',
         }}
       >
-        {/* Top Header / Toggle Row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-          <button
-            onClick={onToggle}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div
             style={{
-              background: 'none',
+              width: '26px',
+              height: '26px',
+              borderRadius: '7px',
+              background: 'rgba(34, 197, 94, 0.2)',
+              border: '1px solid rgba(34, 197, 94, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Hand size={14} color="#22c55e" />
+          </div>
+
+          <div>
+            <div
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                color: '#ffffff',
+                lineHeight: 1.1,
+              }}
+            >
+              GESTURE CONTROL
+            </div>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '8px',
+                fontFamily: 'monospace',
+                color: badge.color,
+                fontWeight: 600,
+                marginTop: '1px',
+              }}
+            >
+              <span>{badge.dot}</span>
+              <span>{badge.label}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Turn Off Options: Toggle Switch & Close Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {/* iOS-Style Toggle Switch */}
+          <button
+            onClick={handleTurnOff}
+            style={{
+              width: '36px',
+              height: '18px',
+              borderRadius: '12px',
+              background: isEnabled ? '#10b981' : '#475569',
               border: 'none',
+              padding: '2px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '2px 0',
+              justifyContent: isEnabled ? 'flex-end' : 'flex-start',
+              boxShadow: isEnabled ? '0 0 10px rgba(16, 185, 129, 0.4)' : 'none',
+              transition: 'all 0.2s ease',
             }}
-            title={isEnabled ? 'Click to disable hand control' : 'Click to enable hand gesture control'}
+            title="Click to turn off gesture control"
           >
-            {/* Hand icon SVG */}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={isEnabled ? '#22d3ee' : '#64748b'} strokeWidth="2.2">
-              <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0" />
-              <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2" />
-              <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8" />
-              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
-            </svg>
-            <span style={{ fontSize: '8px', letterSpacing: '0.14em', fontWeight: 700, color: isEnabled ? '#f8fafc' : '#94a3b8' }}>
-              HAND CONTROL <span style={{ color: isEnabled ? '#22d3ee' : '#64748b' }}>[ {isEnabled ? 'ON' : 'OFF'} ]</span>
-            </span>
-          </button>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <span style={{ fontSize: '7px', color: badge.color, fontFamily: 'monospace', fontWeight: 700 }}>
-              {badge.dot} {badge.label}
-            </span>
-            <button
-              onClick={() => setShowHelp(!showHelp)}
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '50%',
-                width: '14px',
-                height: '14px',
-                color: '#94a3b8',
-                fontSize: '8px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                lineHeight: 1,
-              }}
-              title="Gesture Help"
-            >
-              ?
-            </button>
-          </div>
-        </div>
-
-        {/* Tiny webcam preview box when enabled */}
-        {isEnabled && (
-          <div style={{ position: 'relative', width: '100%', height: '82px', borderRadius: '4px', overflow: 'hidden', background: '#000', border: '1px solid rgba(34, 211, 238, 0.2)' }}>
-            {/* Hidden video element for MediaPipe stream */}
-            <video
-              ref={videoRef}
-              playsInline
-              muted
-              style={{ display: 'none' }}
-            />
-
-            {/* Canvas overlay with mini skeleton */}
-            <canvas
-              ref={canvasRef}
-              width={160}
-              height={120}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block',
-              }}
-            />
-
-            {/* Gesture status badge overlay */}
             <div
               style={{
-                position: 'absolute',
-                bottom: 2,
-                left: 4,
-                right: 4,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: 'rgba(2, 8, 20, 0.85)',
-                borderRadius: '2px',
-                padding: '2px 5px',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
+                width: '14px',
+                height: '14px',
+                borderRadius: '50%',
+                background: '#ffffff',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
+                transition: 'all 0.2s ease',
               }}
-            >
-              <span style={{ fontSize: '6.5px', color: '#22d3ee', letterSpacing: '0.08em', fontWeight: 600 }}>
-                {getGestureLabel()}
-              </span>
-              {confidence > 0 && (
-                <span style={{ fontSize: '6.5px', color: '#94a3b8', fontFamily: 'monospace' }}>
-                  {confidence}%
-                </span>
-              )}
-            </div>
+            />
+          </button>
 
-            {status === 'loading' && (
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'rgba(2, 8, 20, 0.9)',
-                  fontSize: '7.5px',
-                  color: '#22d3ee',
-                  letterSpacing: '0.12em',
-                  fontWeight: 600,
-                }}
-              >
-                INITIALIZING AI...
-              </div>
-            )}
+          {/* Dedicated Close Button */}
+          <button
+            onClick={handleTurnOff}
+            style={{
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '50%',
+              width: '22px',
+              height: '22px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.25)';
+              e.currentTarget.style.borderColor = '#ef4444';
+              e.currentTarget.style.color = '#ffffff';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+              e.currentTarget.style.color = '#94a3b8';
+            }}
+            title="Turn off gesture control"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      </div>
+
+      {/* ── Webcam / Gesture Canvas Box ── */}
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '128px',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          background: '#020617',
+          border: '1px solid rgba(34, 211, 238, 0.25)',
+          boxShadow: 'inset 0 0 20px rgba(0, 0, 0, 0.8)',
+        }}
+      >
+        {/* Hidden video element for MediaPipe stream */}
+        <video
+          ref={videoRef}
+          playsInline
+          muted
+          style={{ display: 'none' }}
+        />
+
+        {/* Real-time Skeleton Canvas */}
+        <canvas
+          ref={canvasRef}
+          width={240}
+          height={140}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
+
+        {/* Loading Overlay */}
+        {status === 'loading' && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              background: 'rgba(2, 6, 23, 0.92)',
+              fontSize: '8.5px',
+              color: '#38bdf8',
+              letterSpacing: '0.14em',
+              fontWeight: 700,
+              fontFamily: 'monospace',
+            }}
+          >
+            <Sparkles size={16} color="#38bdf8" />
+            <span>INITIALIZING AI TRACKER...</span>
           </div>
         )}
 
+        {/* Permission Denied Overlay */}
         {status === 'permission_denied' && (
-          <div style={{ fontSize: '7px', color: '#ef4444', letterSpacing: '0.05em' }}>
-            Camera permission denied. Mouse active.
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              padding: '12px',
+              textAlign: 'center',
+              background: 'rgba(2, 6, 23, 0.95)',
+              fontSize: '8.5px',
+              color: '#f87171',
+              fontFamily: 'monospace',
+            }}
+          >
+            <VideoOff size={16} color="#f87171" />
+            <span style={{ fontWeight: 700 }}>CAMERA ACCESS DENIED</span>
+            <span style={{ color: '#94a3b8', fontSize: '7.5px' }}>
+              Please allow webcam in browser settings. Mouse &amp; touch remain active.
+            </span>
+          </div>
+        )}
+
+        {/* Bottom Status Ribbon Overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 4,
+            left: 5,
+            right: 5,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            background: 'rgba(6, 12, 24, 0.85)',
+            backdropFilter: 'blur(8px)',
+            borderRadius: '4px',
+            padding: '3px 7px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ fontSize: '10px' }}>{gestureInfo.icon}</span>
+            <span
+              style={{
+                fontSize: '8px',
+                color: gestureInfo.active ? '#34d399' : '#38bdf8',
+                letterSpacing: '0.08em',
+                fontWeight: 700,
+                fontFamily: 'monospace',
+              }}
+            >
+              {gestureInfo.label}
+            </span>
+          </div>
+
+          {confidence > 0 && (
+            <span
+              style={{
+                fontSize: '8px',
+                color: '#94a3b8',
+                fontFamily: 'monospace',
+                fontWeight: 600,
+              }}
+            >
+              {confidence}%
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* ── Collapsible Gesture Instructions Accordion ── */}
+      <div>
+        <button
+          onClick={() => setShowGuide((prev) => !prev)}
+          style={{
+            width: '100%',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '6px',
+            padding: '5px 8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            color: '#94a3b8',
+            fontSize: '9px',
+            fontFamily: 'monospace',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+            e.currentTarget.style.color = '#e2e8f0';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
+            e.currentTarget.style.color = '#94a3b8';
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <HelpCircle size={11} color="#38bdf8" />
+            <span>HOW TO USE GESTURES</span>
+          </div>
+          {showGuide ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+        </button>
+
+        {showGuide && (
+          <div
+            style={{
+              marginTop: '6px',
+              padding: '8px 10px',
+              background: 'rgba(2, 6, 23, 0.6)',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: '6px',
+              fontSize: '8.5px',
+              color: '#cbd5e1',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px',
+              lineHeight: 1.4,
+            }}
+          >
+            <div>
+              <strong style={{ color: '#38bdf8' }}>🖐 Move Hand:</strong> Orbit &amp; rotate Earth
+            </div>
+            <div>
+              <strong style={{ color: '#38bdf8' }}>🤏 Pinch / 2 Hands:</strong> Zoom in &amp; out
+            </div>
+            <div>
+              <strong style={{ color: '#38bdf8' }}>✌ Air-Quote:</strong> Aim &amp; inspect marker
+            </div>
+            <div>
+              <strong style={{ color: '#38bdf8' }}>✊ Fist:</strong> Pause gesture tracking
+            </div>
+            <div style={{ color: '#94a3b8', borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '4px' }}>
+              🖱 Mouse &amp; touch controls always available
+            </div>
           </div>
         )}
       </div>
+
+      {/* ── Direct "Turn Off Gesture Control" Button ── */}
+      <button
+        onClick={handleTurnOff}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '6px',
+          background: 'rgba(239, 68, 68, 0.15)',
+          border: '1px solid rgba(239, 68, 68, 0.4)',
+          borderRadius: '8px',
+          padding: '6px 10px',
+          color: '#fca5a5',
+          fontSize: '9.5px',
+          fontWeight: 700,
+          fontFamily: 'monospace',
+          letterSpacing: '0.08em',
+          cursor: 'pointer',
+          transition: 'all 0.15s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'rgba(239, 68, 68, 0.3)';
+          e.currentTarget.style.borderColor = '#ef4444';
+          e.currentTarget.style.color = '#ffffff';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+          e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+          e.currentTarget.style.color = '#fca5a5';
+        }}
+        title="Stop camera and turn off gesture control"
+      >
+        <Power size={11} color="#f87171" />
+        <span>TURN OFF GESTURE CONTROL</span>
+      </button>
     </div>
   );
 }

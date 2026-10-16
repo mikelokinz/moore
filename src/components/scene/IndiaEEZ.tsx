@@ -120,10 +120,10 @@ function IslandHubBadge({ hub }: { hub: IslandHubData }) {
     };
   }
 
-  const badgeBorder = isIndia ? 'rgba(255, 77, 109, 0.75)' : 'rgba(56, 189, 248, 0.75)';
-  const badgeBg = isIndia ? 'rgba(20, 6, 12, 0.88)' : 'rgba(4, 18, 32, 0.88)';
-  const badgeDot = isIndia ? '#ff4d6d' : '#38bdf8';
-  const badgeGlow = isIndia ? 'rgba(255, 77, 109, 0.35)' : 'rgba(56, 189, 248, 0.35)';
+  const badgeBorder = isIndia ? 'rgba(16, 185, 129, 0.75)' : 'rgba(56, 189, 248, 0.75)';
+  const badgeBg = isIndia ? 'rgba(6, 28, 20, 0.88)' : 'rgba(4, 18, 32, 0.88)';
+  const badgeDot = isIndia ? '#10b981' : '#38bdf8';
+  const badgeGlow = isIndia ? 'rgba(16, 185, 129, 0.35)' : 'rgba(56, 189, 248, 0.35)';
 
   return (
     <Html
@@ -262,8 +262,8 @@ export function IndiaEEZ({ visible, showLabels = true }: IndiaEEZProps) {
             id: props.id,
             coreTubeGeo,
             haloTubeGeo,
-            color: isIndia ? '#ff4d6d' : '#38bdf8',
-            haloColor: isIndia ? '#ff1744' : '#0284c7',
+            color: isIndia ? '#10b981' : '#38bdf8',
+            haloColor: isIndia ? '#059669' : '#0284c7',
             name: props.name,
           });
         }
@@ -280,7 +280,7 @@ export function IndiaEEZ({ visible, showLabels = true }: IndiaEEZProps) {
 
           const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
 
-          // Segmented dashed 3D tubes along bilateral treaty borders
+          // Segmented dashed 3D tubes along bilateral treaty borders (All other lines are blue)
           const length = curve.getLength();
           const totalDashes = Math.max(10, Math.round(length * 75));
           const dashTubes: THREE.TubeGeometry[] = [];
@@ -303,7 +303,7 @@ export function IndiaEEZ({ visible, showLabels = true }: IndiaEEZProps) {
           demarcationList.push({
             id: props.id,
             dashTubes,
-            color: props.color || '#fbbf24',
+            color: '#38bdf8',
             name: props.name,
             treaty: props.treaty,
           });
@@ -322,7 +322,7 @@ export function IndiaEEZ({ visible, showLabels = true }: IndiaEEZProps) {
           group: props.group,
           country: props.country,
           subtext: props.subtext,
-          color: isIndia ? '#ff4d6d' : '#38bdf8',
+          color: isIndia ? '#10b981' : '#38bdf8',
         });
       }
 
@@ -334,7 +334,7 @@ export function IndiaEEZ({ visible, showLabels = true }: IndiaEEZProps) {
           id: props.id,
           position: [x, y, z],
           name: props.name,
-          color: '#fbbf24',
+          color: '#34d399',
         });
       }
     });

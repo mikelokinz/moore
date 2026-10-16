@@ -10,9 +10,10 @@ interface WaveSurfaceProps {
   temperature: number;     // SST — influences water color
   depth: number;           // Current dive depth — surface fades as we descend
   isDifference?: boolean;  // Whether to render the model's prediction as a holographic ghost
+  currentDirection?: number; // Current direction in degrees from True North (0=N, 90=E, 180=S, 270=W)
+  isWatchCycle?: boolean;    // Whether this is rendered in the Buoy Watch Cycle view
 }
 
-// ── Hybrid Cinematic Vertex Shader ───────────────────────────────────────────
 const waveVertexShader = /* glsl */ `
   uniform float uTime;
   uniform float uAmplitude;
@@ -89,6 +90,7 @@ const waveFragmentShader = /* glsl */ `
   uniform sampler2D tNormal;
   uniform float uOpacity;
   uniform float uIsHologram;
+  uniform vec2 uCurrentFlow; // Dynamic satellite ocean current vector (direction * speed)
 
   varying vec3 vWorldPosition;
   varying vec3 vNormal;
@@ -121,9 +123,11 @@ const waveFragmentShader = /* glsl */ `
       return;
     }
 
-    // 1. High-frequency wind ripples via dual-layer scrolling normal maps
-    vec2 uv0 = (vWorldPosition.xz * 0.035) + vec2(uTime * 0.025, uTime * 0.018);
-    vec2 uv1 = (vWorldPosition.xz * 0.075) + vec2(-uTime * 0.018, uTime * 0.022);
+    // 1. Dynamic satellite-driven surface drift along live current vectors
+    vec2 flow0 = uCurrentFlow * uTime;
+    vec2 flow1 = vec2(-uCurrentFlow.y, uCurrentFlow.x) * (uTime * 0.65);
+    vec2 uv0 = (vWorldPosition.xz * 0.035) - flow0;
+    vec2 uv1 = (vWorldPosition.xz * 0.075) - flow0 * 1.45 - flow1 * 0.35;
     
     vec3 n0 = unpackNormal(texture2D(tNormal, uv0));
     vec3 n1 = unpackNormal(texture2D(tNormal, uv1));
@@ -265,19 +269,50 @@ function createAdaptiveOceanGeometry(size = 3000, segments = 160): THREE.BufferG
   return geo;
 }
 
-export function WaveSurface({ waveHeight, modelWaveHeight, currentSpeed, temperature, depth, isDifference }: WaveSurfaceProps) {
+export function WaveSurface({
+  waveHeight,
+  modelWaveHeight,
+  currentSpeed,
+  temperature,
+  depth,
+  isDifference,
+  currentDirection = 45,
+  isWatchCycle = false,
+}: WaveSurfaceProps) {
   const meshRef = useRef<THREE.Mesh>(null!);
   const materialRef = useRef<THREE.ShaderMaterial>(null!);
   const modelMaterialRef = useRef<THREE.ShaderMaterial>(null!);
 
   const waveParams = useMemo(() => {
-    return computeWaveParams(waveHeight, modelWaveHeight, currentSpeed, temperature);
-  }, [waveHeight, modelWaveHeight, currentSpeed, temperature]);
+    return computeWaveParams(
+      waveHeight,
+      modelWaveHeight,
+      currentSpeed,
+      temperature,
+      currentDirection,
+      isWatchCycle
+    );
+  }, [waveHeight, modelWaveHeight, currentSpeed, temperature, currentDirection, isWatchCycle]);
 
   const modelWaveParams = useMemo(() => {
     // For the model's prediction, the primary amplitude is derived from the modelWaveHeight
-    return computeWaveParams(modelWaveHeight, waveHeight, currentSpeed, temperature);
-  }, [waveHeight, modelWaveHeight, currentSpeed, temperature]);
+    return computeWaveParams(
+      modelWaveHeight,
+      waveHeight,
+      currentSpeed,
+      temperature,
+      currentDirection,
+      isWatchCycle
+    );
+  }, [waveHeight, modelWaveHeight, currentSpeed, temperature, currentDirection, isWatchCycle]);
+
+  const currentFlowVec = useMemo(() => {
+    const spd = Math.max(0.08, currentSpeed);
+    return new THREE.Vector2(
+      waveParams.direction.x * (0.012 + spd * 0.022),
+      waveParams.direction.y * (0.012 + spd * 0.022)
+    );
+  }, [waveParams.direction, currentSpeed]);
 
   const waterNormals = useLoader(THREE.TextureLoader, '/textures/waternormals.jpg');
   waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
@@ -292,13 +327,14 @@ export function WaveSurface({ waveHeight, modelWaveHeight, currentSpeed, tempera
     uChoppiness: { value: waveParams.choppiness },
     uFrequency: { value: waveParams.frequency },
     uDirection: { value: waveParams.direction },
+    uCurrentFlow: { value: currentFlowVec },
     uDeepColor: { value: waveParams.deepColor },
     uShallowColor: { value: waveParams.shallowColor },
     uSunDirection: { value: new THREE.Vector3(100, 32, -80).normalize() },
     tNormal: { value: waterNormals },
     uOpacity: { value: 1.0 },
     uIsHologram: { value: 0.0 },
-  }), [waterNormals, waveParams]);
+  }), [waterNormals, waveParams, currentFlowVec]);
 
   const modelUniforms = useMemo(() => ({
     uTime: { value: 0 },
@@ -306,13 +342,14 @@ export function WaveSurface({ waveHeight, modelWaveHeight, currentSpeed, tempera
     uChoppiness: { value: modelWaveParams.choppiness },
     uFrequency: { value: modelWaveParams.frequency },
     uDirection: { value: modelWaveParams.direction },
+    uCurrentFlow: { value: currentFlowVec },
     uDeepColor: { value: modelWaveParams.deepColor },
     uShallowColor: { value: modelWaveParams.shallowColor },
     uSunDirection: { value: new THREE.Vector3(100, 32, -80).normalize() },
     tNormal: { value: waterNormals },
     uOpacity: { value: 1.0 },
     uIsHologram: { value: 1.0 },
-  }), [waterNormals, modelWaveParams]);
+  }), [waterNormals, modelWaveParams, currentFlowVec]);
 
   useFrame((state) => {
     const targetOpacity = depth > 50 ? Math.max(0.1, 1.0 - depth / 1200) : 1.0;
@@ -324,6 +361,7 @@ export function WaveSurface({ waveHeight, modelWaveHeight, currentSpeed, tempera
       mat.uniforms.uChoppiness.value = waveParams.choppiness;
       mat.uniforms.uFrequency.value = waveParams.frequency;
       mat.uniforms.uDirection.value = waveParams.direction;
+      mat.uniforms.uCurrentFlow.value.copy(currentFlowVec);
       mat.uniforms.uOpacity.value += (targetOpacity - mat.uniforms.uOpacity.value) * 0.05;
     }
 
@@ -334,6 +372,7 @@ export function WaveSurface({ waveHeight, modelWaveHeight, currentSpeed, tempera
       mat.uniforms.uChoppiness.value = modelWaveParams.choppiness;
       mat.uniforms.uFrequency.value = modelWaveParams.frequency;
       mat.uniforms.uDirection.value = modelWaveParams.direction;
+      mat.uniforms.uCurrentFlow.value.copy(currentFlowVec);
       mat.uniforms.uOpacity.value += (targetOpacity - mat.uniforms.uOpacity.value) * 0.05;
     }
   });

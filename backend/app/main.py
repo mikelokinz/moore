@@ -10,6 +10,7 @@ from app.api.routes_anomalies import router as anomalies_router
 from app.api.routes_argo import router as argo_router
 from app.api.routes_ingest import router as ingest_router
 from app.api.routes_clouds import router as clouds_router
+from app.api.routes_physics import router as physics_router
 from app.services.ml_service import ml_service
 from app.services.anomaly_service import anomaly_service
 from app.services.ocean_service import ocean_service
@@ -24,6 +25,8 @@ logging.basicConfig(
 )
 # Avoid transport debug logs dumping provider payloads or connection details.
 logging.getLogger("aiokafka").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
@@ -50,6 +53,7 @@ app.include_router(anomalies_router, prefix="/api")
 app.include_router(argo_router, prefix="/api")
 app.include_router(ingest_router, prefix="/api")
 app.include_router(clouds_router, prefix="/api")
+app.include_router(physics_router, prefix="/api")
 
 
 async def periodic_cloud_sync():

@@ -21,6 +21,7 @@ import {
   RefreshCw,
   Database,
   Cpu,
+  Zap,
 } from 'lucide-react';
 import {
   PRESET_SCENARIOS,
@@ -29,9 +30,11 @@ import {
   type BuoyState,
   type WatchCircleDepthLevel,
   type MooringSegmentData,
+  type PhysicsEngineMode,
 } from './watchCircleTypes';
 import type { LiveWatchCirclePackage } from '../../services/buoy/mooringService';
 import { MooringLoadCalculatorBox } from './MooringLoadCalculatorBox';
+import { OceanCompassHUD } from './OceanCompassHUD';
 
 interface WatchCircleHUDProps {
   env: EnvironmentalConditions;
@@ -46,6 +49,8 @@ interface WatchCircleHUDProps {
   onSelectMaterial?: (id: string) => void;
   currentDepth: WatchCircleDepthLevel;
   onDepthChange: (depth: WatchCircleDepthLevel) => void;
+  physicsEngine?: PhysicsEngineMode;
+  setPhysicsEngine?: (engine: PhysicsEngineMode) => void;
   showBoundary: boolean;
   setShowBoundary: (v: boolean) => void;
   showTrail: boolean;
@@ -68,6 +73,10 @@ interface WatchCircleHUDProps {
   activeBuoyId?: string;
   onSelectBuoyId?: (id: string) => void;
   onRefreshLive?: () => void;
+  telemetryMode?: 'actual' | 'prediction';
+  setTelemetryMode?: (mode: 'actual' | 'prediction') => void;
+  cameraHeading?: number;
+  predictedPos?: { x: number; z: number; offsetMeters?: number; bearingDeg?: number } | null;
 }
 
 const DEPTHS: WatchCircleDepthLevel[] = [0, 10, 50, 100, 500, 1000, 2500];
@@ -163,6 +172,12 @@ export function WatchCircleHUD({
   activeBuoyId,
   onSelectBuoyId,
   onRefreshLive,
+  telemetryMode = 'actual',
+  setTelemetryMode,
+  cameraHeading = 0,
+  predictedPos = null,
+  physicsEngine = 'rapier',
+  setPhysicsEngine,
 }: WatchCircleHUDProps) {
   const [controlsTab, setControlsTab] = useState<'live' | 'presets' | 'custom'>(isLiveMode ? 'live' : 'presets');
   const [activeScenario, setActiveScenario] = useState<string>('monsoon');
@@ -191,26 +206,41 @@ export function WatchCircleHUD({
     }
   };
 
+  // Ocean flow direction directly follows buoy movement drift vector
+  const effectiveOceanDirection =
+    buoyState && buoyState.excursionDistance > 0.5
+      ? buoyState.excursionAngle
+      : (env.currentDirection ?? 45);
+
+  const calmRadiusMeters = Math.round(config.watchCircleRadius * 0.38);
+  const isInsideCalm = buoyState.excursionDistance <= calmRadiusMeters;
+
   const statusBg =
     buoyState.status === 'BREACH'
       ? 'rgba(239, 68, 68, 0.2)'
       : buoyState.status === 'WARNING'
       ? 'rgba(245, 158, 11, 0.2)'
-      : 'rgba(34, 211, 238, 0.15)';
+      : isInsideCalm
+      ? 'rgba(16, 185, 129, 0.2)'
+      : 'rgba(245, 158, 11, 0.15)';
 
   const statusBorder =
     buoyState.status === 'BREACH'
       ? '#ef4444'
       : buoyState.status === 'WARNING'
       ? '#f59e0b'
-      : '#22d3ee';
+      : isInsideCalm
+      ? '#10b981'
+      : '#fbbf24';
 
   const statusText =
     buoyState.status === 'BREACH'
       ? 'BREACH · WATCH CIRCLE EXCURSION'
       : buoyState.status === 'WARNING'
       ? 'WARNING · APPROACHING BOUNDARY'
-      : 'NORMAL · INSIDE WATCH CIRCLE';
+      : isInsideCalm
+      ? 'NORMAL · INSIDE CALM SEA CIRCLE'
+      : 'NOMINAL · INSIDE WATCH CIRCLE';
 
   const currentDepthInfo = DEPTH_DESCRIPTIONS[currentDepth] || DEPTH_DESCRIPTIONS[0];
   const selectedSegment =
@@ -219,7 +249,7 @@ export function WatchCircleHUD({
       : null;
 
   return (
-    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 30 }}>
+    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 50 }}>
       {/* ── TOP HEADER BAR ── */}
       <div
         style={{
@@ -352,6 +382,143 @@ export function WatchCircleHUD({
               />
             )}
           </div>
+
+          {/* ── Prediction vs. Actual Toggle (Defaults to Live Telemetry) ── */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(15, 23, 42, 0.9)',
+              borderRadius: '6px',
+              padding: '2.5px',
+              border: '1px solid rgba(34, 211, 238, 0.3)',
+              marginLeft: '6px',
+              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <button
+              onClick={() => setTelemetryMode?.('actual')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                border: 'none',
+                background: telemetryMode === 'actual' ? 'rgba(34, 211, 238, 0.22)' : 'transparent',
+                color: telemetryMode === 'actual' ? '#38bdf8' : '#94a3b8',
+                boxShadow: telemetryMode === 'actual' ? '0 0 10px rgba(56, 189, 248, 0.3)' : 'none',
+                fontWeight: 700,
+                fontSize: '8.5px',
+                fontFamily: 'monospace',
+                letterSpacing: '0.08em',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Display actual real-time GPS coordinates reported directly by buoy hardware telemetry"
+            >
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: '#38bdf8',
+                  boxShadow: '0 0 6px #38bdf8',
+                }}
+              />
+              LIVE TELEMETRY (ACTUAL)
+            </button>
+
+            <button
+              onClick={() => setTelemetryMode?.('prediction')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                border: 'none',
+                background: telemetryMode === 'prediction' ? 'rgba(245, 158, 11, 0.22)' : 'transparent',
+                color: telemetryMode === 'prediction' ? '#fbbf24' : '#94a3b8',
+                boxShadow: telemetryMode === 'prediction' ? '0 0 10px rgba(245, 158, 11, 0.3)' : 'none',
+                fontWeight: 700,
+                fontSize: '8.5px',
+                fontFamily: 'monospace',
+                letterSpacing: '0.08em',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Display satellite AI predicted drift trajectory and physical mooring tension forecasts"
+            >
+              <Cpu size={10} color={telemetryMode === 'prediction' ? '#fbbf24' : '#94a3b8'} />
+              SATELLITE AI PREDICTION
+            </button>
+          </div>
+
+          {/* ── Physics Engine Selector: RAPIER (WASM) vs KINEMATIC (ODE) ── */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'rgba(15, 23, 42, 0.9)',
+              borderRadius: '6px',
+              padding: '2.5px',
+              border: '1px solid rgba(245, 158, 11, 0.35)',
+              marginLeft: '6px',
+              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <button
+              onClick={() => setPhysicsEngine?.('rapier')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                border: 'none',
+                background: physicsEngine === 'rapier' ? 'rgba(245, 158, 11, 0.25)' : 'transparent',
+                color: physicsEngine === 'rapier' ? '#fbbf24' : '#94a3b8',
+                boxShadow: physicsEngine === 'rapier' ? '0 0 10px rgba(245, 158, 11, 0.35)' : 'none',
+                fontWeight: 700,
+                fontSize: '8.5px',
+                fontFamily: 'monospace',
+                letterSpacing: '0.08em',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Rapier 3D WebAssembly Physics Engine (60Hz Hydrostatic Buoyancy & Restoring Catenary Pull)"
+            >
+              <Zap size={10} color={physicsEngine === 'rapier' ? '#fbbf24' : '#94a3b8'} />
+              RAPIER (WASM)
+            </button>
+
+            <button
+              onClick={() => setPhysicsEngine?.('kinematic')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                border: 'none',
+                background: physicsEngine === 'kinematic' ? 'rgba(168, 85, 247, 0.25)' : 'transparent',
+                color: physicsEngine === 'kinematic' ? '#c084fc' : '#94a3b8',
+                boxShadow: physicsEngine === 'kinematic' ? '0 0 10px rgba(168, 85, 247, 0.35)' : 'none',
+                fontWeight: 700,
+                fontSize: '8.5px',
+                fontFamily: 'monospace',
+                letterSpacing: '0.08em',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Kinematic ODE Wave Tracking Mode"
+            >
+              <Cpu size={10} color={physicsEngine === 'kinematic' ? '#c084fc' : '#94a3b8'} />
+              KINEMATIC ODE
+            </button>
+          </div>
         </div>
 
         {/* Center: Current Depth Zone Indicator Banner */}
@@ -450,10 +617,10 @@ export function WatchCircleHUD({
               color: rightPanelTab === 'load_calc' ? '#ffffff' : '#38bdf8',
               fontWeight: 700,
             }}
-            title="Toggle Mooring Material Load Calculator Box"
+            title="Toggle Mooring Material Tension & Load Calculator Box"
           >
-            <Activity size={11} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
-            LOAD CALC
+            <Zap size={11} style={{ marginRight: '4px', verticalAlign: 'middle' }} color={rightPanelTab === 'load_calc' ? '#ffffff' : '#22d3ee'} />
+            TENSION & LOAD
           </button>
           <button
             onClick={onResetCamera}
@@ -487,13 +654,14 @@ export function WatchCircleHUD({
           left: '24px',
           width: '320px',
           maxHeight: 'calc(100vh - 160px)',
-          background: 'rgba(2, 8, 23, 0.88)',
+          background: 'rgba(2, 8, 23, 0.94)',
           border: '1px solid rgba(34, 211, 238, 0.25)',
           borderRadius: '8px',
           padding: '14px',
           backdropFilter: 'blur(16px)',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.7)',
           pointerEvents: 'auto',
+          zIndex: 60,
           display: 'flex',
           flexDirection: 'column',
           gap: '10px',
@@ -823,6 +991,19 @@ export function WatchCircleHUD({
                         WARNING
                       </span>
                     )}
+                    {key === 'calm' && (
+                      <span
+                        style={{
+                          fontSize: '7.5px',
+                          color: '#10b981',
+                          border: '1px solid #10b981',
+                          borderRadius: '3px',
+                          padding: '1px 4px',
+                        }}
+                      >
+                        CALM CIRCLE
+                      </span>
+                    )}
                   </div>
                   <div
                     style={{
@@ -1034,13 +1215,14 @@ export function WatchCircleHUD({
           right: '24px',
           width: rightPanelTab === 'load_calc' ? '390px' : '330px',
           maxHeight: 'calc(100vh - 160px)',
-          background: 'rgba(2, 8, 23, 0.92)',
+          background: 'rgba(2, 8, 23, 0.94)',
           border: '1px solid rgba(34, 211, 238, 0.3)',
           borderRadius: '8px',
           padding: '14px',
           backdropFilter: 'blur(16px)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.75)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.85)',
           pointerEvents: 'auto',
+          zIndex: 60,
           display: 'flex',
           flexDirection: 'column',
           gap: '10px',
@@ -1075,9 +1257,13 @@ export function WatchCircleHUD({
                 background: rightPanelTab === 'load_calc' ? 'rgba(34, 211, 238, 0.25)' : 'transparent',
                 color: rightPanelTab === 'load_calc' ? '#22d3ee' : '#94a3b8',
                 fontWeight: rightPanelTab === 'load_calc' ? 700 : 500,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '3px',
               }}
             >
-              LOAD CALC
+              <Zap size={10} color={rightPanelTab === 'load_calc' ? '#22d3ee' : '#94a3b8'} />
+              TENSION & LOAD
             </button>
             <button
               onClick={() => setRightPanelTab('segments')}
@@ -1271,9 +1457,9 @@ export function WatchCircleHUD({
                       alignItems: 'center',
                       gap: '4px',
                     }}
-                    title="Calculate loads for this segment material"
+                    title="Calculate dynamic tension and loads for this segment material"
                   >
-                    <Activity size={11} /> LOAD CALC
+                    <Zap size={11} color="#38bdf8" /> TENSION & LOAD CALC
                   </button>
                 </div>
               </div>
@@ -1341,8 +1527,10 @@ export function WatchCircleHUD({
                 <AlertTriangle size={15} color="#ef4444" />
               ) : buoyState.status === 'WARNING' ? (
                 <AlertTriangle size={15} color="#f59e0b" />
+              ) : isInsideCalm ? (
+                <CheckCircle size={15} color="#10b981" />
               ) : (
-                <CheckCircle size={15} color="#22d3ee" />
+                <CheckCircle size={15} color="#fbbf24" />
               )}
               <div>
                 <div style={{ fontSize: '9.5px', fontWeight: 800, color: statusBorder, fontFamily: 'monospace', letterSpacing: '0.08em' }}>
@@ -1351,6 +1539,112 @@ export function WatchCircleHUD({
                 <div style={{ fontSize: '8px', color: '#94a3b8', fontFamily: 'monospace', marginTop: '2px' }}>
                   EXCURSION: {Math.round(buoyState.excursionDistance)}m / {config.watchCircleRadius}m ({buoyState.excursionPercent}%)
                 </div>
+              </div>
+            </div>
+
+            {/* Concentric Watch Boundaries & Condition Legend Card */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.75)',
+                border: '1px solid rgba(34, 211, 238, 0.25)',
+                borderRadius: '6px',
+                padding: '10px 12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '7px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '8.5px', color: '#38bdf8', fontFamily: 'monospace', fontWeight: 800, letterSpacing: '0.08em' }}>
+                  EXCURSION CIRCLES & TOLERANCE BOUNDARIES
+                </span>
+                <span style={{ fontSize: '7.5px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                  3 CONCENTRIC ZONES
+                </span>
+              </div>
+
+              {/* Green Calm Sea Circle */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '5px 8px',
+                  borderRadius: '4px',
+                  background: isInsideCalm ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.02)',
+                  border: isInsideCalm ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid transparent',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
+                  <div>
+                    <div style={{ fontSize: '8.5px', fontWeight: 700, color: '#34d399', fontFamily: 'monospace' }}>
+                      CALM SEA CIRCLE (NORMAL)
+                    </div>
+                    <div style={{ fontSize: '7px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                      Calm conditions excursion limit · 0 to {calmRadiusMeters}m (~38%)
+                    </div>
+                  </div>
+                </div>
+                <span style={{ fontSize: '8.5px', fontWeight: 700, color: '#10b981', fontFamily: 'monospace' }}>
+                  {calmRadiusMeters}m
+                </span>
+              </div>
+
+              {/* Yellow Watch Circle Limit */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '5px 8px',
+                  borderRadius: '4px',
+                  background: !isInsideCalm && buoyState.status !== 'BREACH' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.02)',
+                  border: !isInsideCalm && buoyState.status !== 'BREACH' ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid transparent',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#fbbf24', boxShadow: '0 0 6px #fbbf24' }} />
+                  <div>
+                    <div style={{ fontSize: '8.5px', fontWeight: 700, color: '#fbbf24', fontFamily: 'monospace' }}>
+                      WATCH CIRCLE LIMIT (NOMINAL)
+                    </div>
+                    <div style={{ fontSize: '7px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                      Mooring scope design envelope · {calmRadiusMeters}m to {config.watchCircleRadius}m
+                    </div>
+                  </div>
+                </div>
+                <span style={{ fontSize: '8.5px', fontWeight: 700, color: '#fbbf24', fontFamily: 'monospace' }}>
+                  {config.watchCircleRadius}m
+                </span>
+              </div>
+
+              {/* Red Max Breach Hazard */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '5px 8px',
+                  borderRadius: '4px',
+                  background: buoyState.status === 'BREACH' ? 'rgba(239, 68, 68, 0.18)' : 'rgba(255, 255, 255, 0.02)',
+                  border: buoyState.status === 'BREACH' ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid transparent',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', boxShadow: '0 0 6px #ef4444' }} />
+                  <div>
+                    <div style={{ fontSize: '8.5px', fontWeight: 700, color: '#f87171', fontFamily: 'monospace' }}>
+                      MAX BREACH BOUNDARY (HAZARD)
+                    </div>
+                    <div style={{ fontSize: '7px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                      Heavy weather limit / Anchor drag risk · &gt; {config.watchCircleRadius}m ({Math.round(config.watchCircleRadius * 1.3)}m)
+                    </div>
+                  </div>
+                </div>
+                <span style={{ fontSize: '8.5px', fontWeight: 700, color: '#ef4444', fontFamily: 'monospace' }}>
+                  {Math.round(config.watchCircleRadius * 1.3)}m
+                </span>
               </div>
             </div>
 
@@ -1514,6 +1808,76 @@ export function WatchCircleHUD({
             </button>
           );
         })}
+      </div>
+
+      {/* ── Bottom-Left Corner: Recenter to Buoy & Minimalist Compass HUD ── */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '24px',
+          left: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          gap: '10px',
+          zIndex: 60,
+          pointerEvents: 'auto',
+        }}
+      >
+        {/* Recenter Camera to Buoy Button */}
+        <button
+          onClick={() => {
+            onDepthChange(0);
+            onSetCameraPreset('surface');
+            onResetCamera();
+          }}
+          title="Recenter camera to surface buoy position"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(8, 14, 28, 0.98) 100%)',
+            border: '1.5px solid rgba(56, 189, 248, 0.4)',
+            borderRadius: '8px',
+            padding: '8px 14px',
+            color: '#38bdf8',
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '0.12em',
+            fontFamily: 'monospace',
+            cursor: 'pointer',
+            boxShadow: '0 4px 18px rgba(0, 0, 0, 0.65), inset 0 0 10px rgba(56, 189, 248, 0.1)',
+            backdropFilter: 'blur(16px)',
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.background = 'linear-gradient(135deg, rgba(14, 116, 144, 0.5) 0%, rgba(15, 23, 42, 0.98) 100%)';
+            el.style.borderColor = '#38bdf8';
+            el.style.boxShadow = '0 0 22px rgba(56, 189, 248, 0.55), inset 0 0 12px rgba(56, 189, 248, 0.25)';
+            el.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget as HTMLElement;
+            el.style.background = 'linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(8, 14, 28, 0.98) 100%)';
+            el.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+            el.style.boxShadow = '0 4px 18px rgba(0, 0, 0, 0.65), inset 0 0 10px rgba(56, 189, 248, 0.1)';
+            el.style.transform = 'translateY(0)';
+          }}
+        >
+          <Crosshair size={14} color="#38bdf8" />
+          <span>RECENTER BUOY</span>
+        </button>
+
+        {/* Minimalist Oceanic Compass HUD */}
+        <OceanCompassHUD
+          heading={cameraHeading ?? 0}
+          currentDirection={effectiveOceanDirection}
+          currentSpeed={env.currentSpeed}
+          waveDirection={effectiveOceanDirection}
+          waveHeight={env.waveHeight}
+          onResetNorth={() => onSetCameraPreset('top')}
+        />
       </div>
     </div>
   );

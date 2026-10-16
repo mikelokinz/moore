@@ -1,7 +1,7 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import type { BuoyState } from './watchCircleTypes';
+import type { BuoyState, PhysicsEngineMode } from './watchCircleTypes';
 import type { WaveParams } from '../../utils/waveMath';
 import { getWaveDisplacement, getWaveNormal } from '../../utils/waveMath';
 
@@ -19,6 +19,7 @@ interface MooringBuoy3DProps {
   }>;
   onInspectPart?: (partId: string, worldPos: [number, number, number]) => void;
   waveParams?: WaveParams;
+  physicsEngine?: PhysicsEngineMode;
 }
 
 // 4 multi-directional rolling swells with incommensurate wavelengths (matching OceanSurface.tsx)
@@ -91,6 +92,7 @@ export function MooringBuoy3D({
   liveMotionRef,
   onInspectPart,
   waveParams,
+  physicsEngine = 'rapier',
 }: MooringBuoy3DProps) {
   const groupRef = useRef<THREE.Group>(null!);
   const pivotRef = useRef<THREE.Group>(null!);
@@ -472,21 +474,21 @@ export function MooringBuoy3D({
       const dt = Math.min(delta, 0.045);
 
       // 1. Heave Dynamics: High waterplane buoyancy restoring stiffness + hydrodynamic radiation damping
-      const omegaY = 2.8;
+      const omegaY = physicsEngine === 'rapier' ? 3.2 : 2.8;
       const zetaY = 0.72;
       const aY = omegaY * omegaY * (targetHeave - dyn.y) - 2.0 * zetaY * omegaY * dyn.vy;
       dyn.vy += aY * dt;
       dyn.y += dyn.vy * dt;
 
       // 2. Pitch Dynamics: Water-plane metacentric restoring moment + pitch damping (NO CLAMPING!)
-      const omegaP = 2.1;
+      const omegaP = physicsEngine === 'rapier' ? 2.4 : 2.1;
       const zetaP = 0.75;
       const aP = omegaP * omegaP * (targetPitch - dyn.pitch) - 2.0 * zetaP * omegaP * dyn.vPitch;
       dyn.vPitch += aP * dt;
       dyn.pitch += dyn.vPitch * dt;
 
       // 3. Roll Dynamics: Water-plane metacentric restoring moment + roll damping (NO CLAMPING!)
-      const omegaR = 2.1;
+      const omegaR = physicsEngine === 'rapier' ? 2.4 : 2.1;
       const zetaR = 0.75;
       const aR = omegaR * omegaR * (targetRoll - dyn.roll) - 2.0 * zetaR * omegaR * dyn.vRoll;
       dyn.vRoll += aR * dt;

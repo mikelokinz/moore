@@ -1,10 +1,12 @@
-import { useRef, useEffect, useState, useCallback, lazy, Suspense } from 'react';
+import { useRef, useEffect, useState, useCallback, useMemo, lazy, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { Starfield } from '../components/scene/Starfield';
 import { MoorSenseEarth } from '../components/scene/MoorSenseEarth';
+import { CelestialSun } from '../components/scene/CelestialSun';
+import { CelestialMoon } from '../components/scene/CelestialMoon';
 import { BuoyMarkersLayer } from '../components/scene/buoy/BuoyMarkersLayer';
 import { CameraController } from '../components/scene/CameraController';
 import { HandControlWidget } from '../components/ui/HandControlWidget';
@@ -16,8 +18,13 @@ import type { CameraStage, Station, DepthLevel } from '../types/ocean';
 import type { BuoyLocation } from '../services/buoy/buoyTypes';
 import type { CloudMetadata } from '../services/cloudService';
 import { LocalOcean3D, LocalOceanUI } from '../components/localocean/LocalOceanScene';
-import { RotateCcw, Hand, Cloud, Compass, CircleDot, Shield, Tag } from 'lucide-react';
+import { RotateCcw, Hand, Shield, Tag, Menu, ChevronDown } from 'lucide-react';
 import { EEZLegendHUD } from '../components/ui/EEZLegendHUD';
+import { OnlineBuoysModal } from '../components/ui/OnlineBuoysModal';
+import { OfflineBuoysModal } from '../components/ui/OfflineBuoysModal';
+import { PillMenuPopover } from '../components/ui/PillMenuPopover';
+import { SolarTimeHUD } from '../components/ui/SolarTimeHUD';
+import { calculateSolarEphemeris } from '../utils/solarCalculator';
 
 const WatchCircleLab = lazy(() => import('./WatchCircleLab'));
 
@@ -29,7 +36,11 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
   // Camera stage state
   const [stage, setStage] = useState<CameraStage>(initialStage);
   const [isReadyToInteract, setIsReadyToInteract] = useState(false);
-  const [cloudMeta, setCloudMeta] = useState<CloudMetadata | null>(null);
+
+  // Floating Pill & Modal States
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOnlineModalOpen, setIsOnlineModalOpen] = useState(false);
+  const [isOfflineModalOpen, setIsOfflineModalOpen] = useState(false);
 
   // Local Ocean Area Dive Simulation State
   const [isLocalOcean, setIsLocalOcean] = useState(false);
@@ -48,6 +59,44 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
   // Buoy Data Layer
   const { buoys, selectedBuoy, selectedBuoyId, selectBuoy } = useBuoyData();
 
+  // Buoy status partitioning: Online (9) vs Offline (3)
+  const isBuoyOffline = useCallback((b: BuoyLocation): boolean => {
+    return (
+      b.freshness?.state === 'OFFLINE' ||
+      b.id === 'OMNI-AD06' ||
+      b.id === 'OMNI-AD07' ||
+      b.id === 'OMNI-BD09'
+    );
+  }, []);
+
+  const onlineBuoys = buoys.filter((b) => !isBuoyOffline(b));
+  const offlineBuoys = buoys.filter((b) => isBuoyOffline(b));
+
+  const handleSelectOnlineBuoy = useCallback(
+    (b: BuoyLocation) => {
+      selectBuoy(b.id);
+      setIsOnlineModalOpen(false);
+    },
+    [selectBuoy]
+  );
+
+  const handleSelectOfflineBuoy = useCallback(
+    (b: BuoyLocation) => {
+      selectBuoy(b.id);
+      setIsOfflineModalOpen(false);
+    },
+    [selectBuoy]
+  );
+
+  // Stable memoized target station for camera focus transitions
+  const memoizedTargetStation = useMemo(() => {
+    if (!selectedBuoy) return null;
+    return {
+      latitude: selectedBuoy.latitude,
+      longitude: selectedBuoy.longitude,
+    };
+  }, [selectedBuoy?.id, selectedBuoy?.latitude, selectedBuoy?.longitude]);
+
   // Hand Gesture Control
   const hand = useHandGesture();
   const handHoverRef = useRef<boolean>(false);
@@ -56,8 +105,58 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
   const orbitRef = useRef<OrbitControlsImpl>(null!);
   const cameraTargetRef = useRef(new THREE.Vector3(0, 0, 0));
 
-  // Sun directional light position (identical to Ocean Sentry)
-  const sunPosition: [number, number, number] = [12, 5, 8];
+  // ═══ ASTRONOMICAL SOLAR ENGINE (Dynamic Sun by Real-Time) ═══
+  const [currentTime, setCurrentTime] = useState<Date>(() => new Date());
+  const [isLiveTime, setIsLiveTime] = useState<boolean>(true);
+  const [simulatedHour, setSimulatedHour] = useState<number>(() => {
+    const now = new Date();
+    return now.getUTCHours() + now.getUTCMinutes() / 60;
+  });
+
+  // Real-time ticking every second in live mode
+  useEffect(() => {
+    if (!isLiveTime) return;
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isLiveTime]);
+
+  // Compute active date for astronomical calculations
+  const activeSolarDate = useMemo(() => {
+    if (isLiveTime) return currentTime;
+    const d = new Date(currentTime);
+    const hrs = Math.floor(simulatedHour);
+    const mins = Math.floor((simulatedHour - hrs) * 60);
+    const secs = Math.floor(((simulatedHour - hrs) * 60 - mins) * 60);
+    d.setUTCHours(hrs, mins, secs, 0);
+    return d;
+  }, [isLiveTime, currentTime, simulatedHour]);
+
+  // Compute exact celestial subsolar coordinates & India lighting regime
+  const solarEphemeris = useMemo(() => {
+    return calculateSolarEphemeris(activeSolarDate);
+  }, [activeSolarDate]);
+
+  const sunPosition: [number, number, number] = solarEphemeris.position;
+
+  // Handlers for solar time HUD
+  const handleToggleLive = useCallback(() => {
+    setIsLiveTime((prev) => {
+      const next = !prev;
+      if (next) {
+        const now = new Date();
+        setCurrentTime(now);
+        setSimulatedHour(now.getUTCHours() + now.getUTCMinutes() / 60);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleHourChange = useCallback((hourFraction: number) => {
+    setIsLiveTime(false);
+    setSimulatedHour(hourFraction);
+  }, []);
 
   // Helper to convert BuoyLocation to Station for Local Ocean Simulation
   const buoyToStation = useCallback((buoy: BuoyLocation | null): Station => {
@@ -122,16 +221,15 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
 
   const isExploring = stage === 'exploration';
 
-  // Smooth re-center view handler
+  const [recenterKey, setRecenterKey] = useState(0);
+  const [isAutoRotating, setIsAutoRotating] = useState(false);
+
+  // Smooth orbital re-center view handler focusing closer on India & buoys
   const handleRecenter = useCallback(() => {
     if (selectedBuoy) {
       selectBuoy(null);
     }
-    if (orbitRef.current) {
-      orbitRef.current.target.set(0, 0, 0);
-      cameraTargetRef.current.set(0, 0, 0);
-      orbitRef.current.update();
-    }
+    setRecenterKey((k) => k + 1);
   }, [selectedBuoy, selectBuoy]);
 
   // Hook up hand gesture events for buoy deselection & recenter
@@ -209,7 +307,7 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
         /* ═══ 3D PLANETARY EARTH GLOBE MODE ═══ */
         <>
           <Canvas
-            camera={{ position: [4.45, 1.64, -0.72], fov: 42, near: 0.1, far: 300 }}
+            camera={{ position: [4.45, 1.64, -0.72], fov: 42, near: 0.1, far: 50000 }}
             gl={{
               antialias: true,
               alpha: false,
@@ -220,27 +318,25 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
             dpr={[1, 2]}
             style={{ background: '#000208' }}
           >
-            {/* Lighting system */}
-            <ambientLight intensity={0.08} />
-            <directionalLight
-              position={sunPosition}
-              intensity={1.35}
-              color="#fffdfa"
-              castShadow={false}
-            />
-            <pointLight position={[-12, -6, 12]} intensity={0.12} color="#081832" />
-
             {/* Deep cosmos stars */}
             <Starfield count={3200} />
+
+            {/* Radiant Photorealistic Sun positioned in celestial space with dynamic sunlight */}
+            <CelestialSun position={sunPosition} intensity={2.2} />
+
+            {/* Realistic Celestial Moon in background (Pic 2 reference) */}
+            <CelestialMoon sunPosition={sunPosition} />
+
+            {/* Ambient starlight */}
+            <ambientLight intensity={0.06} />
 
             {/* MoorSense Earth Base Layer + Operational OMNI Buoy Markers */}
             <MoorSenseEarth
               sunPosition={sunPosition}
               depth={0}
-              showWind={true}
+              showClouds={true}
               showEEZ={showEEZ}
               showEEZLabels={showEEZLabels}
-              onCloudMetadataUpdate={setCloudMeta}
             >
               <BuoyMarkersLayer
                 buoys={buoys}
@@ -254,25 +350,29 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
             <CameraController
               stage={stage}
               onStageComplete={handleStageComplete}
-              targetStation={selectedBuoy ? { latitude: selectedBuoy.latitude, longitude: selectedBuoy.longitude } : null}
+              targetStation={memoizedTargetStation}
               isExploring={isExploring}
               handDelta={hand.deltaRot}
               handZoom={hand.zoomFactor}
               currentTargetRef={cameraTargetRef}
               orbitControlsRef={orbitRef}
+              recenterKey={recenterKey}
+              onAutoRotateChange={setIsAutoRotating}
             />
 
             {/* OrbitControls */}
             <OrbitControls
               ref={orbitRef}
-              enabled={isExploring && !selectedBuoy}
+              enabled={isExploring}
               enablePan={false}
-              minDistance={2.8}
-              maxDistance={14.0}
+              minDistance={selectedBuoy ? 0.35 : 2.8}
+              maxDistance={selectedBuoy ? 3.5 : 14.0}
               rotateSpeed={0.4}
               zoomSpeed={0.6}
               enableDamping
               dampingFactor={0.06}
+              autoRotate={isAutoRotating}
+              autoRotateSpeed={0.35}
               makeDefault={false}
             />
           </Canvas>
@@ -288,350 +388,322 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
             }}
           />
 
-          {/* ═══ TOP HUD HEADER ═══ */}
+          {/* ═══ TOP FLOATING CONTROLS (NO FULL-WIDTH NAVBAR) ═══ */}
           <div
             style={{
               position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '60px',
+              top: '20px',
+              left: '24px',
+              right: '24px',
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               justifyContent: 'space-between',
-              padding: '0 24px',
-              zIndex: 25,
+              zIndex: 35,
               pointerEvents: 'none',
-              background: 'linear-gradient(180deg, rgba(2, 6, 23, 0.8) 0%, transparent 100%)',
-              borderBottom: '1px solid rgba(34, 211, 238, 0.1)',
             }}
           >
-            {/* Brand Monogram & Title */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', pointerEvents: 'auto' }}>
-              <div
-                style={{
-                  width: '10px',
-                  height: '10px',
-                  borderRadius: '50%',
-                  background: '#22d3ee',
-                  boxShadow: '0 0 10px #22d3ee',
-                }}
-              />
-              <div>
+            {/* Top Left: Application Name + Quote (NO background box) & Vertically Arranged Buoy Buttons */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', pointerEvents: 'auto' }}>
+              {/* Application Name & Quote — strictly NO background box */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div
+                    style={{
+                      width: '9px',
+                      height: '9px',
+                      borderRadius: '50%',
+                      background: '#22d3ee',
+                      boxShadow: '0 0 12px #22d3ee, 0 0 24px rgba(34, 211, 238, 0.85)',
+                    }}
+                  />
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: 800,
+                      letterSpacing: '0.24em',
+                      color: '#ffffff',
+                      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+                      lineHeight: 1,
+                      textShadow: '0 0 22px rgba(34, 211, 238, 0.55), 0 2px 10px rgba(0, 0, 0, 0.9)',
+                    }}
+                  >
+                    MOORSENSE
+                  </div>
+                </div>
                 <div
                   style={{
-                    fontSize: '15px',
-                    fontWeight: 600,
-                    letterSpacing: '0.24em',
-                    color: '#ffffff',
+                    paddingLeft: '19px',
+                    fontSize: '9.5px',
+                    letterSpacing: '0.14em',
+                    fontStyle: 'italic',
+                    color: 'rgba(186, 230, 253, 0.85)',
                     fontFamily: "'Space Grotesk', system-ui, sans-serif",
-                    lineHeight: 1.1,
+                    textShadow: '0 1px 8px rgba(0, 0, 0, 0.9)',
                   }}
                 >
-                  MOORSENSE
+                  “Where ocean depth meets digital twin intelligence”
                 </div>
-                <div
+              </div>
+
+              {/* Vertically Arranged Liquid Glass Buoy Buttons */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', alignItems: 'flex-start' }}>
+                {/* ── Liquid Glass Online Buoys Button ── */}
+                <button
+                  data-buoy-trigger="online"
+                  onClick={() => {
+                    setIsOnlineModalOpen((prev) => !prev);
+                    setIsOfflineModalOpen(false);
+                    setIsMenuOpen(false);
+                  }}
                   style={{
-                    fontSize: '8px',
-                    letterSpacing: '0.18em',
-                    color: 'rgba(34, 211, 238, 0.85)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '9px',
+                    background: isOnlineModalOpen
+                      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(16, 185, 129, 0.16) 50%, rgba(255, 255, 255, 0.04) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(16, 185, 129, 0.07) 50%, rgba(255, 255, 255, 0.02) 100%)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                    border: isOnlineModalOpen
+                      ? '1px solid rgba(52, 211, 153, 0.5)'
+                      : '1px solid rgba(255, 255, 255, 0.18)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.65)',
+                    borderRadius: '30px',
+                    padding: '8px 18px 8px 14px',
+                    color: '#ffffff',
+                    fontSize: '10.5px',
+                    fontWeight: 700,
+                    letterSpacing: '0.14em',
                     fontFamily: 'monospace',
-                    marginTop: '2px',
+                    cursor: 'pointer',
+                    boxShadow: isOnlineModalOpen
+                      ? '0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 0 16px rgba(16, 185, 129, 0.25)'
+                      : '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(16, 185, 129, 0.1)',
+                    transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.7), 0 0 18px rgba(16, 185, 129, 0.28)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = isOnlineModalOpen
+                      ? '0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 0 16px rgba(16, 185, 129, 0.25)'
+                      : '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(16, 185, 129, 0.1)';
+                  }}
+                  title="View active online buoys with coordinates and pull times"
                 >
-                  MOORING INTEGRITY DIGITAL TWIN SYSTEM
-                </div>
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: '#34d399',
+                      boxShadow: '0 0 10px #34d399, 0 0 16px #10b981',
+                    }}
+                  />
+                  <span style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>ONLINE BUOYS</span>
+                  <span
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.12)',
+                      border: '1px solid rgba(255, 255, 255, 0.35)',
+                      boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.4)',
+                      color: '#ffffff',
+                      fontSize: '9.5px',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    {onlineBuoys.length}
+                  </span>
+                </button>
+
+                {/* ── Liquid Glass Offline Buoys Button ── */}
+                <button
+                  data-buoy-trigger="offline"
+                  onClick={() => {
+                    setIsOfflineModalOpen((prev) => !prev);
+                    setIsOnlineModalOpen(false);
+                    setIsMenuOpen(false);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '9px',
+                    background: isOfflineModalOpen
+                      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(244, 63, 94, 0.16) 50%, rgba(255, 255, 255, 0.04) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(244, 63, 94, 0.07) 50%, rgba(255, 255, 255, 0.02) 100%)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                    border: isOfflineModalOpen
+                      ? '1px solid rgba(251, 113, 133, 0.5)'
+                      : '1px solid rgba(255, 255, 255, 0.18)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.65)',
+                    borderRadius: '30px',
+                    padding: '8px 18px 8px 14px',
+                    color: '#ffffff',
+                    fontSize: '10.5px',
+                    fontWeight: 700,
+                    letterSpacing: '0.14em',
+                    fontFamily: 'monospace',
+                    cursor: 'pointer',
+                    boxShadow: isOfflineModalOpen
+                      ? '0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 0 16px rgba(244, 63, 94, 0.25)'
+                      : '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(244, 63, 94, 0.1)',
+                    transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.7), 0 0 18px rgba(244, 63, 94, 0.28)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = isOfflineModalOpen
+                      ? '0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 0 16px rgba(244, 63, 94, 0.25)'
+                      : '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(244, 63, 94, 0.1)';
+                  }}
+                  title="View offline buoys (purposefully removed vs lost)"
+                >
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: '#fb7185',
+                      boxShadow: '0 0 10px #fb7185, 0 0 16px #f43f5e',
+                    }}
+                  />
+                  <span style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>OFFLINE BUOYS</span>
+                  <span
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.12)',
+                      border: '1px solid rgba(255, 255, 255, 0.35)',
+                      boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.4)',
+                      color: '#ffffff',
+                      fontSize: '9.5px',
+                      fontWeight: 800,
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    {offlineBuoys.length}
+                  </span>
+                </button>
               </div>
             </div>
 
-            {/* Controls Bar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', pointerEvents: 'auto' }}>
-              {/* NOAA Clouds Status Indicator */}
-              <div
-                className="sci-panel"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '5px 11px',
-                  borderRadius: '4px',
-                  border: '1px solid rgba(14, 165, 233, 0.25)',
-                  fontSize: '8.5px',
-                  letterSpacing: '0.12em',
-                  fontFamily: 'monospace',
-                  color: '#38bdf8',
-                }}
-                title={
-                  cloudMeta
-                    ? `NOAA SOS Composite: ${cloudMeta.frame_id}`
-                    : 'NOAA Science On a Sphere: Real-time satellite clouds'
-                }
-              >
-                <Cloud size={11} color="#38bdf8" />
-                <span>NOAA CLOUDS:</span>
-                <span style={{ color: '#ffffff', fontWeight: 700 }}>
-                  {cloudMeta?.status === 'LIVE' ? '● LIVE (10 MIN)' : '● ACTIVE'}
-                </span>
-              </div>
+            {/* Top Right: Astronomical Solar Time HUD & Liquid Glass Menu */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', pointerEvents: 'auto' }}>
+              <SolarTimeHUD
+                ephemeris={solarEphemeris}
+                isLiveTime={isLiveTime}
+                onToggleLive={handleToggleLive}
+                onHourChange={handleHourChange}
+                currentSimulatedHour={simulatedHour}
+              />
 
-              {/* OMNI Network Counter */}
-              {/* 📡 OMNI BUOY NETWORK TOGGLE */}
-              <button
-                onClick={() => setShowBuoys((prev) => !prev)}
-                className="sci-panel"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '5px 12px',
-                  borderRadius: '4px',
-                  border: `1px solid ${showBuoys ? 'rgba(34, 211, 238, 0.4)' : 'rgba(100, 116, 139, 0.3)'}`,
-                  background: showBuoys ? 'rgba(15, 23, 42, 0.75)' : 'rgba(15, 23, 42, 0.5)',
-                  fontSize: '8.5px',
-                  letterSpacing: '0.14em',
-                  fontFamily: 'monospace',
-                  color: showBuoys ? '#38bdf8' : '#94a3b8',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-                title="Toggle OMNI buoy telemetry markers on the 3D globe"
-              >
-                <span
-                  style={{
-                    display: 'inline-block',
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: showBuoys ? '#10b981' : '#64748b',
-                    boxShadow: showBuoys ? '0 0 8px #10b981' : 'none',
-                    transition: 'all 0.2s ease',
-                  }}
-                />
-                <span>OMNI BUOY NETWORK:</span>
-                <span style={{ color: showBuoys ? '#ffffff' : '#64748b', fontWeight: 700 }}>
-                  {showBuoys ? `[ ${buoys.length} ON ]` : '[ OFF ]'}
-                </span>
-              </button>
-
-              {/* 🛡️ MARITIME EXCLUSIVE ECONOMIC ZONE (EEZ) TOGGLE */}
-              <button
-                onClick={() => setShowEEZ((prev) => !prev)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: showEEZ ? 'rgba(239, 68, 68, 0.25)' : 'rgba(15, 23, 42, 0.75)',
-                  border: `1px solid ${showEEZ ? '#ef4444' : 'rgba(239, 68, 68, 0.35)'}`,
-                  borderRadius: '4px',
-                  padding: '5px 12px',
-                  color: showEEZ ? '#fca5a5' : '#94a3b8',
-                  fontSize: '8.5px',
-                  fontWeight: 600,
-                  letterSpacing: '0.14em',
-                  fontFamily: 'monospace',
-                  cursor: 'pointer',
-                  boxShadow: showEEZ ? '0 0 14px rgba(239, 68, 68, 0.35)' : 'none',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  if (!showEEZ) {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(239, 68, 68, 0.15)';
-                    (e.currentTarget as HTMLElement).style.borderColor = '#ef4444';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!showEEZ) {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.75)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(239, 68, 68, 0.35)';
-                  }
-                }}
-                title="Toggle maritime Exclusive Economic Zone (EEZ) boundaries on the ocean globe map"
-              >
-                <Shield size={11} color={showEEZ ? '#ef4444' : '#94a3b8'} />
-                <span>ECONOMIC ZONE</span>
-                <span style={{ fontWeight: 700, color: showEEZ ? '#ffffff' : '#64748b' }}>
-                  {showEEZ ? '[ ON ]' : '[ OFF ]'}
-                </span>
-              </button>
-
-              {/* 🏷️ EEZ NAME TAGS TOGGLE BUTTON */}
-              {showEEZ && (
+              <div style={{ position: 'relative' }}>
                 <button
-                  onClick={() => setShowEEZLabels((prev) => !prev)}
+                  data-menu-trigger="true"
+                  onClick={() => {
+                    setIsMenuOpen((prev) => !prev);
+                    setIsOnlineModalOpen(false);
+                    setIsOfflineModalOpen(false);
+                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
-                    background: showEEZLabels ? 'rgba(56, 189, 248, 0.25)' : 'rgba(15, 23, 42, 0.75)',
-                    border: `1px solid ${showEEZLabels ? '#38bdf8' : 'rgba(56, 189, 248, 0.35)'}`,
-                    borderRadius: '4px',
-                    padding: '5px 12px',
-                    color: showEEZLabels ? '#7dd3fc' : '#94a3b8',
-                    fontSize: '8.5px',
-                    fontWeight: 600,
+                    gap: '8px',
+                    background: isMenuOpen
+                      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(14, 165, 233, 0.16) 50%, rgba(255, 255, 255, 0.04) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(14, 165, 233, 0.07) 50%, rgba(255, 255, 255, 0.02) 100%)',
+                    backdropFilter: 'blur(20px) saturate(180%)',
+                    WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                    border: isMenuOpen
+                      ? '1px solid rgba(56, 189, 248, 0.5)'
+                      : '1px solid rgba(255, 255, 255, 0.18)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.65)',
+                    borderRadius: '30px',
+                    padding: '8px 18px',
+                    color: '#ffffff',
+                    fontSize: '11px',
+                    fontWeight: 700,
                     letterSpacing: '0.14em',
                     fontFamily: 'monospace',
                     cursor: 'pointer',
-                    boxShadow: showEEZLabels ? '0 0 14px rgba(56, 189, 248, 0.35)' : 'none',
-                    transition: 'all 0.2s ease',
+                    boxShadow: isMenuOpen
+                      ? '0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 0 16px rgba(14, 165, 233, 0.25)'
+                      : '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(14, 165, 233, 0.1)',
+                    transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
                   }}
                   onMouseEnter={(e) => {
-                    if (!showEEZLabels) {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(56, 189, 248, 0.15)';
-                      (e.currentTarget as HTMLElement).style.borderColor = '#38bdf8';
-                    }
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.7), 0 0 18px rgba(56, 189, 248, 0.28)';
                   }}
                   onMouseLeave={(e) => {
-                    if (!showEEZLabels) {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.75)';
-                      (e.currentTarget as HTMLElement).style.borderColor = 'rgba(56, 189, 248, 0.35)';
-                    }
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.boxShadow = isMenuOpen
+                      ? '0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.3), 0 0 16px rgba(14, 165, 233, 0.25)'
+                      : '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(14, 165, 233, 0.1)';
                   }}
-                  title="Toggle territory and island name tags on the ocean globe map"
+                  title="Open system controls (Gesture, Economic Zone, Alerts)"
                 >
-                  <Tag size={11} color={showEEZLabels ? '#38bdf8' : '#94a3b8'} />
-                  <span>NAME TAGS</span>
-                  <span style={{ fontWeight: 700, color: showEEZLabels ? '#ffffff' : '#64748b' }}>
-                    {showEEZLabels ? '[ ON ]' : '[ OFF ]'}
-                  </span>
+                  <Menu size={14} color="#38bdf8" />
+                  <span style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>MENU</span>
+                  <ChevronDown
+                    size={13}
+                    style={{
+                      transform: isMenuOpen ? 'rotate(180deg)' : 'none',
+                      transition: 'transform 0.2s ease',
+                    }}
+                  />
                 </button>
-              )}
 
-              {/* ⭕ WATCH CIRCLE 3D QUICK ACTION BUTTON */}
-              <button
-                onClick={() => handleOpenWatchCircle(selectedBuoy)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.3) 0%, rgba(14, 116, 144, 0.6) 100%)',
-                  border: '1px solid rgba(34, 211, 238, 0.65)',
-                  borderRadius: '4px',
-                  padding: '5px 12px',
-                  color: '#ffffff',
-                  fontSize: '8.5px',
-                  fontWeight: 700,
-                  letterSpacing: '0.14em',
-                  fontFamily: 'monospace',
-                  cursor: 'pointer',
-                  boxShadow: '0 0 16px rgba(34, 211, 238, 0.35)',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34, 211, 238, 0.5) 0%, rgba(14, 116, 144, 0.8) 100%)';
-                  (e.currentTarget as HTMLElement).style.borderColor = '#22d3ee';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34, 211, 238, 0.3) 0%, rgba(14, 116, 144, 0.6) 100%)';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(34, 211, 238, 0.65)';
-                }}
-                title="Launch 3D Mooring Watch Circle & Excursion Simulation"
-              >
-                <CircleDot size={11} color="#22d3ee" />
-                <span>WATCH CIRCLE 3D</span>
-              </button>
-
-              {/* 🌊 EXPLORE OCEAN AREA QUICK BUTTON */}
-              <button
-                onClick={() => handleExploreOcean(selectedBuoy)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'rgba(15, 23, 42, 0.75)',
-                  border: '1px solid rgba(34, 211, 238, 0.35)',
-                  borderRadius: '4px',
-                  padding: '5px 11px',
-                  color: '#38bdf8',
-                  fontSize: '8.5px',
-                  fontWeight: 600,
-                  letterSpacing: '0.14em',
-                  fontFamily: 'monospace',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = 'rgba(34, 211, 238, 0.15)';
-                  (e.currentTarget as HTMLElement).style.borderColor = '#22d3ee';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.75)';
-                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(34, 211, 238, 0.35)';
-                }}
-                title="Dive into local 3D ocean ecosystem with Gerstner waves & marine fauna"
-              >
-                <Compass size={11} color="#38bdf8" />
-                <span>EXPLORE OCEAN</span>
-              </button>
-
-              {/* Hand Control Status Badge */}
-              <div
-                className="sci-panel"
-                onClick={hand.toggleEnabled}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '5px 10px',
-                  borderRadius: '4px',
-                  border: `1px solid ${hand.isEnabled ? 'rgba(34, 197, 94, 0.4)' : 'rgba(100, 116, 139, 0.3)'}`,
-                  fontSize: '8.5px',
-                  letterSpacing: '0.12em',
-                  fontFamily: 'monospace',
-                  color: hand.isEnabled ? '#22c55e' : '#94a3b8',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                  transition: 'all 0.2s ease',
-                }}
-                title="Click to toggle webcam hand gesture tracking"
-              >
-                <Hand size={11} color={hand.isEnabled ? '#22c55e' : '#64748b'} />
-                <span>GESTURE:</span>
-                <span style={{ fontWeight: 700 }}>
-                  {hand.isEnabled ? '● ACTIVE' : '○ OFFLINE'}
-                </span>
+                {/* Pill Menu Dropdown Popover */}
+                <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: '8px' }}>
+                  <PillMenuPopover
+                    isOpen={isMenuOpen}
+                    onClose={() => setIsMenuOpen(false)}
+                    isHandEnabled={hand.isEnabled}
+                    onToggleHand={hand.toggleEnabled}
+                    showEEZ={showEEZ}
+                    onToggleEEZ={() => setShowEEZ((prev) => !prev)}
+                    showEEZLabels={showEEZLabels}
+                    onToggleEEZLabels={() => setShowEEZLabels((prev) => !prev)}
+                    onRecenter={handleRecenter}
+                  />
+                </div>
               </div>
-
-              {isExploring && (
-                <button
-                  onClick={handleRecenter}
-                  title="Reset View"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    background: 'rgba(15, 23, 42, 0.75)',
-                    border: '1px solid rgba(34, 211, 238, 0.25)',
-                    borderRadius: '4px',
-                    padding: '6px 10px',
-                    color: 'rgba(34, 211, 238, 0.9)',
-                    fontSize: '8.5px',
-                    letterSpacing: '0.14em',
-                    fontFamily: 'monospace',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(34, 211, 238, 0.15)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(34, 211, 238, 0.6)';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.75)';
-                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(34, 211, 238, 0.25)';
-                  }}
-                >
-                  <RotateCcw size={11} />
-                  <span>RECENTER</span>
-                </button>
-              )}
             </div>
           </div>
 
           <BuoyDetailsPanel
             buoy={selectedBuoy}
             onClose={() => selectBuoy(null)}
-            onExploreOcean={handleExploreOcean}
             onOpenWatchCircle={handleOpenWatchCircle}
+            onExploreOcean={handleExploreOcean}
+          />
+
+          {/* Modals for Online & Offline Buoys */}
+          <OnlineBuoysModal
+            isOpen={isOnlineModalOpen}
+            onClose={() => setIsOnlineModalOpen(false)}
+            buoys={onlineBuoys}
+            selectedBuoyId={selectedBuoyId}
+            onSelectBuoy={handleSelectOnlineBuoy}
+          />
+
+          <OfflineBuoysModal
+            isOpen={isOfflineModalOpen}
+            onClose={() => setIsOfflineModalOpen(false)}
+            buoys={offlineBuoys}
+            onSelectBuoy={handleSelectOfflineBuoy}
           />
 
           {/* Maritime EEZ Demarcations Information HUD */}
@@ -640,6 +712,8 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
             onClose={() => setShowEEZ(false)}
             showLabels={showEEZLabels}
             onToggleLabels={() => setShowEEZLabels((prev) => !prev)}
+            buoys={buoys}
+            onSelectBuoy={(id) => selectBuoy(id)}
           />
 
           {/* Hand Gesture Control Widget */}
@@ -647,6 +721,7 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
             <HandControlWidget
               isEnabled={hand.isEnabled}
               onToggle={hand.toggleEnabled}
+              onTurnOff={hand.disable}
               status={hand.status}
               gesture={hand.gesture}
               confidence={hand.confidence}
@@ -661,6 +736,58 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
             pointerRef={hand.pointerRef}
             hoverRef={handHoverRef}
           />
+
+          {/* Bottom Left: Liquid Glass Recenter View Button */}
+          {isReadyToInteract && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '24px',
+                left: '24px',
+                zIndex: 35,
+                pointerEvents: 'auto',
+                animation: 'slideInFromLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              <button
+                onClick={handleRecenter}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '9px',
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(14, 165, 233, 0.07) 50%, rgba(255, 255, 255, 0.02) 100%)',
+                  backdropFilter: 'blur(20px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.65)',
+                  borderRadius: '30px',
+                  padding: '9px 18px',
+                  color: '#ffffff',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  fontFamily: 'monospace',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(14, 165, 233, 0.1)',
+                  transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                  e.currentTarget.style.boxShadow =
+                    '0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1.5px 2px rgba(255, 255, 255, 0.7), 0 0 18px rgba(56, 189, 248, 0.28)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.45), inset 0 -1px 1px rgba(0, 0, 0, 0.2), 0 0 8px rgba(14, 165, 233, 0.1)';
+                }}
+                title="Rotate globe and zoom in to focus on India & Indian Ocean OMNI Buoys"
+              >
+                <RotateCcw size={14} color="#38bdf8" />
+                <span style={{ textShadow: '0 1px 4px rgba(0, 0, 0, 0.6)' }}>RECENTER INDIA</span>
+              </button>
+            </div>
+          )}
 
           {/* Camera Stage Status Indicator */}
           {stage !== 'exploration' && (
@@ -711,7 +838,7 @@ export default function Explorer({ initialStage = 'exploration' }: ExplorerProps
                 border: '1px solid rgba(255, 255, 255, 0.08)',
               }}
             >
-              SELECT BUOY &nbsp;·&nbsp; CLICK 'WATCH CIRCLE 3D' &nbsp;·&nbsp; DRAG TO ORBIT GLOBE
+              CLICK BUOY TO INSPECT TELEMETRY &nbsp;·&nbsp; DRAG TO ROTATE GLOBE &nbsp;·&nbsp; SCROLL TO ZOOM
             </div>
           )}
         </>

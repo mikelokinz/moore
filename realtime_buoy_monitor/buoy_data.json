@@ -1,0 +1,5203 @@
+{
+  "system": {
+    "name": "INCOIS-NIOT OMNI Real-Time Buoy Telemetry System",
+    "network": "Ocean Moored Buoy Network in the Northern Indian Ocean (OMNI)",
+    "operator": "National Institute of Ocean Technology (NIOT) & Indian National Centre for Ocean Information Services (INCOIS)",
+    "ministry": "Ministry of Earth Sciences (MoES), Government of India",
+    "harvest_time_utc": "2026-10-15T08:00:13.279016+00:00",
+    "harvest_time_ist": "2026-10-15 08:00:13 UTC",
+    "total_stations": 12,
+    "active_stations_today": 9,
+    "sources": {
+      "wfs_registry": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+      "chart_portal": "https://www.incois.gov.in/site/datainfo/moored_omnidata_stock.jsp"
+    }
+  },
+  "buoys": {
+    "OMNI-BD08": {
+      "info": {
+        "id": "OMNI-BD08",
+        "raw_id": "BD08",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Not Reporting",
+        "longitude": 89.235833,
+        "latitude": 17.824722,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Bay of Bengal",
+        "basin": "Northern Bay of Bengal",
+        "depth_m": 2200,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 27.953,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1012.33,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "significant_wave_height": {
+          "value": 1.22,
+          "unit": "m",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Significant Wave Height"
+        },
+        "humidity": {
+          "value": 74.77,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 29.751282,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 0.0,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 142.0313,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 29.846802
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 27.483215
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 28.378906
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 28.868713
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 28.711548
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 28.973999
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 26.791992
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 26.895752
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 27.760925
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 28.017273
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 28.470459
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 28.604736
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 28.68103
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 28.879395
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 25.443115
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 25.040283
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 25.601807
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 26.947632
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 27.565613
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 28.38501
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 28.288879
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 28.378906
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 26.088562
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 27.953186
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1011.23047
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1012.25586
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1013.79395
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1013.20801
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1011.88965
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1012.3291
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1014.52637
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1013.7207
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1011.66992
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1012.25586
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1013.86719
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1013.35449
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1011.96289
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1012.3291
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1014.45313
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1014.30664
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1012.25586
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1011.23047
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1014.37988
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1012.98828
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1011.52344
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1011.88965
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1013.86719
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1012.3291
+          }
+        ],
+        "significant_wave_height": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1.02539
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1.06934
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 0.98145
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 0.95215
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1.3916
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1.46484
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1.23047
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1.33301
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1.43555
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1.34766
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1.23047
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1.30371
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1.15723
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1.40625
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1.18652
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1.18652
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1.30371
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1.20117
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1.12793
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1.17188
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1.21582
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1.21582
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1.14258
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1.21582
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-BD09": {
+      "info": {
+        "id": "OMNI-BD09",
+        "raw_id": "BD09",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 89.116667,
+        "latitude": 17.499722,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Bay of Bengal",
+        "basin": "Central Bay of Bengal",
+        "depth_m": 3100,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "STALE / OFFLINE",
+      "latest_observation_time": "2025-07-24T00:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 28.68,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1753315200000,
+          "timestamp_utc": "2025-07-24T00:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 993.99,
+          "unit": "hPa",
+          "timestamp_epoch": 1753315200000,
+          "timestamp_utc": "2025-07-24T00:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "significant_wave_height": {
+          "value": 1.6,
+          "unit": "m",
+          "timestamp_epoch": 1602136800000,
+          "timestamp_utc": "2020-10-08T06:00:00+00:00",
+          "name": "Significant Wave Height"
+        },
+        "humidity": {
+          "value": 88.0,
+          "unit": "%",
+          "timestamp_epoch": 1753315200000,
+          "timestamp_utc": "2025-07-24T00:00:00+00:00",
+          "name": "Relative Humidity"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1753077600000,
+            "time": "2025-07-21T06:00:00+00:00",
+            "value": 30.00336
+          },
+          {
+            "epoch": 1753088400000,
+            "time": "2025-07-21T09:00:00+00:00",
+            "value": 29.46013
+          },
+          {
+            "epoch": 1753099200000,
+            "time": "2025-07-21T12:00:00+00:00",
+            "value": 29.52727
+          },
+          {
+            "epoch": 1753110000000,
+            "time": "2025-07-21T15:00:00+00:00",
+            "value": 29.30143
+          },
+          {
+            "epoch": 1753120800000,
+            "time": "2025-07-21T18:00:00+00:00",
+            "value": 29.66918
+          },
+          {
+            "epoch": 1753131600000,
+            "time": "2025-07-21T21:00:00+00:00",
+            "value": 28.81314
+          },
+          {
+            "epoch": 1753142400000,
+            "time": "2025-07-22T00:00:00+00:00",
+            "value": 29.68291
+          },
+          {
+            "epoch": 1753153200000,
+            "time": "2025-07-22T03:00:00+00:00",
+            "value": 29.23429
+          },
+          {
+            "epoch": 1753164000000,
+            "time": "2025-07-22T06:00:00+00:00",
+            "value": 29.71953
+          },
+          {
+            "epoch": 1753174800000,
+            "time": "2025-07-22T09:00:00+00:00",
+            "value": 29.63866
+          },
+          {
+            "epoch": 1753185600000,
+            "time": "2025-07-22T12:00:00+00:00",
+            "value": 28.63613
+          },
+          {
+            "epoch": 1753196400000,
+            "time": "2025-07-22T15:00:00+00:00",
+            "value": 29.44487
+          },
+          {
+            "epoch": 1753207200000,
+            "time": "2025-07-22T18:00:00+00:00",
+            "value": 29.2938
+          },
+          {
+            "epoch": 1753218000000,
+            "time": "2025-07-22T21:00:00+00:00",
+            "value": 29.11527
+          },
+          {
+            "epoch": 1753228800000,
+            "time": "2025-07-23T00:00:00+00:00",
+            "value": 29.25565
+          },
+          {
+            "epoch": 1753232401000,
+            "time": "2025-07-23T01:00:01+00:00",
+            "value": 28.22413
+          },
+          {
+            "epoch": 1753239600000,
+            "time": "2025-07-23T03:00:00+00:00",
+            "value": 29.07102
+          },
+          {
+            "epoch": 1753250400000,
+            "time": "2025-07-23T06:00:00+00:00",
+            "value": 27.94488
+          },
+          {
+            "epoch": 1753261200000,
+            "time": "2025-07-23T09:00:00+00:00",
+            "value": 27.00339
+          },
+          {
+            "epoch": 1753272000000,
+            "time": "2025-07-23T12:00:00+00:00",
+            "value": 27.62444
+          },
+          {
+            "epoch": 1753282800000,
+            "time": "2025-07-23T15:00:00+00:00",
+            "value": 28.73074
+          },
+          {
+            "epoch": 1753293600000,
+            "time": "2025-07-23T18:00:00+00:00",
+            "value": 26.77145
+          },
+          {
+            "epoch": 1753304400000,
+            "time": "2025-07-23T21:00:00+00:00",
+            "value": 27.39708
+          },
+          {
+            "epoch": 1753315200000,
+            "time": "2025-07-24T00:00:00+00:00",
+            "value": 28.68038
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1753077600000,
+            "time": "2025-07-21T06:00:00+00:00",
+            "value": 1001.29858
+          },
+          {
+            "epoch": 1753088400000,
+            "time": "2025-07-21T09:00:00+00:00",
+            "value": 999.40796
+          },
+          {
+            "epoch": 1753099200000,
+            "time": "2025-07-21T12:00:00+00:00",
+            "value": 999.23859
+          },
+          {
+            "epoch": 1753110000000,
+            "time": "2025-07-21T15:00:00+00:00",
+            "value": 1001.68768
+          },
+          {
+            "epoch": 1753120800000,
+            "time": "2025-07-21T18:00:00+00:00",
+            "value": 1001.64648
+          },
+          {
+            "epoch": 1753131600000,
+            "time": "2025-07-21T21:00:00+00:00",
+            "value": 999.70551
+          },
+          {
+            "epoch": 1753142400000,
+            "time": "2025-07-22T00:00:00+00:00",
+            "value": 1000.15869
+          },
+          {
+            "epoch": 1753153200000,
+            "time": "2025-07-22T03:00:00+00:00",
+            "value": 1001.14752
+          },
+          {
+            "epoch": 1753164000000,
+            "time": "2025-07-22T06:00:00+00:00",
+            "value": 1000.58899
+          },
+          {
+            "epoch": 1753174800000,
+            "time": "2025-07-22T09:00:00+00:00",
+            "value": 998.34589
+          },
+          {
+            "epoch": 1753185600000,
+            "time": "2025-07-22T12:00:00+00:00",
+            "value": 997.67755
+          },
+          {
+            "epoch": 1753196400000,
+            "time": "2025-07-22T15:00:00+00:00",
+            "value": 998.61597
+          },
+          {
+            "epoch": 1753207200000,
+            "time": "2025-07-22T18:00:00+00:00",
+            "value": 998.43744
+          },
+          {
+            "epoch": 1753218000000,
+            "time": "2025-07-22T21:00:00+00:00",
+            "value": 995.9563
+          },
+          {
+            "epoch": 1753228800000,
+            "time": "2025-07-23T00:00:00+00:00",
+            "value": 996.01581
+          },
+          {
+            "epoch": 1753232401000,
+            "time": "2025-07-23T01:00:01+00:00",
+            "value": 996.16687
+          },
+          {
+            "epoch": 1753239600000,
+            "time": "2025-07-23T03:00:00+00:00",
+            "value": 996.61548
+          },
+          {
+            "epoch": 1753250400000,
+            "time": "2025-07-23T06:00:00+00:00",
+            "value": 995.90594
+          },
+          {
+            "epoch": 1753261200000,
+            "time": "2025-07-23T09:00:00+00:00",
+            "value": 994.52802
+          },
+          {
+            "epoch": 1753272000000,
+            "time": "2025-07-23T12:00:00+00:00",
+            "value": 992.80676
+          },
+          {
+            "epoch": 1753282800000,
+            "time": "2025-07-23T15:00:00+00:00",
+            "value": 994.61957
+          },
+          {
+            "epoch": 1753293600000,
+            "time": "2025-07-23T18:00:00+00:00",
+            "value": 995.2193
+          },
+          {
+            "epoch": 1753304400000,
+            "time": "2025-07-23T21:00:00+00:00",
+            "value": 993.82764
+          },
+          {
+            "epoch": 1753315200000,
+            "time": "2025-07-24T00:00:00+00:00",
+            "value": 993.98785
+          }
+        ],
+        "significant_wave_height": [
+          {
+            "epoch": 1602054000000,
+            "time": "2020-10-07T07:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602057600000,
+            "time": "2020-10-07T08:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602061200000,
+            "time": "2020-10-07T09:00:00+00:00",
+            "value": 1.2
+          },
+          {
+            "epoch": 1602064800000,
+            "time": "2020-10-07T10:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602068400000,
+            "time": "2020-10-07T11:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602072000000,
+            "time": "2020-10-07T12:00:00+00:00",
+            "value": 1.148
+          },
+          {
+            "epoch": 1602075600000,
+            "time": "2020-10-07T13:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602079200000,
+            "time": "2020-10-07T14:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602082800000,
+            "time": "2020-10-07T15:00:00+00:00",
+            "value": 1.223
+          },
+          {
+            "epoch": 1602086400000,
+            "time": "2020-10-07T16:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602090000000,
+            "time": "2020-10-07T17:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602093600000,
+            "time": "2020-10-07T18:00:00+00:00",
+            "value": 1.254
+          },
+          {
+            "epoch": 1602097200000,
+            "time": "2020-10-07T19:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602100800000,
+            "time": "2020-10-07T20:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602104400000,
+            "time": "2020-10-07T21:00:00+00:00",
+            "value": 1.244
+          },
+          {
+            "epoch": 1602108000000,
+            "time": "2020-10-07T22:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602111600000,
+            "time": "2020-10-07T23:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602115200000,
+            "time": "2020-10-08T00:00:00+00:00",
+            "value": 1.064
+          },
+          {
+            "epoch": 1602118800000,
+            "time": "2020-10-08T01:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602122400000,
+            "time": "2020-10-08T02:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602126000000,
+            "time": "2020-10-08T03:00:00+00:00",
+            "value": 1.253
+          },
+          {
+            "epoch": 1602129600000,
+            "time": "2020-10-08T04:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602133200000,
+            "time": "2020-10-08T05:00:00+00:00",
+            "value": 0
+          },
+          {
+            "epoch": 1602136800000,
+            "time": "2020-10-08T06:00:00+00:00",
+            "value": 1.596
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-BD10": {
+      "info": {
+        "id": "OMNI-BD10",
+        "raw_id": "BD10",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 87.990278,
+        "latitude": 16.361667,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Bay of Bengal",
+        "basin": "Western Bay of Bengal",
+        "depth_m": 2900,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 29.772,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1011.8,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "humidity": {
+          "value": 77.5,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 29.892,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 8.564,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 218.42,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791784800000,
+            "time": "2026-10-12T06:00:00+00:00",
+            "value": 30.322
+          },
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 29.151
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 28.687
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 29.541
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 29.696
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 29.243
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 27.738
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 30.313
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 27.812
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 26.616
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 27.331
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 28.155
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 29.491
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 29.408
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 29.05
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 30.208
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 29.337
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 29.228
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 26.823
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 27.905
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 28.423
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 28.837
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 28.383
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 29.772
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791784800000,
+            "time": "2026-10-12T06:00:00+00:00",
+            "value": 1012.25
+          },
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1011.24
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1011.92
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1012.84
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1012.27
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1010.76
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1011.44
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1013.2
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1012.33
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1011.03
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1011.47
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1013.6
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1012.75
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1011.1
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1011.45
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1012.95
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1011.97
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1010.37
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1011.48
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1013.72
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1010.83
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1011.12
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1013.24
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1011.8
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-BD11": {
+      "info": {
+        "id": "OMNI-BD11",
+        "raw_id": "BD11",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Not Reporting",
+        "longitude": 84.166667,
+        "latitude": 13.525,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Bay of Bengal",
+        "basin": "East-Central Bay of Bengal",
+        "depth_m": 3200,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 28.992,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1010.64,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "significant_wave_height": {
+          "value": 1.54,
+          "unit": "m",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Significant Wave Height"
+        },
+        "humidity": {
+          "value": 78.2,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 30.432739,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 5.0,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 177.1875,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 30.30304
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 30.184021
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 30.058899
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 29.901733
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 29.463806
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 29.546204
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 29.797974
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 29.840698
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 29.726257
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 29.807129
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 29.697266
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 29.476013
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 29.396667
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 29.363098
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 29.790344
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 29.889526
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 29.785767
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 29.590454
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 29.453125
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 29.479065
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 28.258362
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 28.269043
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 28.800049
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 28.99231
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1009.98535
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1010.4248
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1012.3291
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1011.88965
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1010.20508
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1010.86426
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1013.06152
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1011.66992
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1009.10645
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1009.61914
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1011.81641
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1011.59668
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1009.76563
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1010.13184
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1011.81641
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1011.23047
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1008.22754
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1009.61914
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1011.88965
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1011.4502
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1010.05859
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1008.88672
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1012.03613
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1010.64453
+          }
+        ],
+        "significant_wave_height": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1.61133
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1.61133
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1.69922
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1.71387
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1.74316
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1.83105
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1.58203
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1.9043
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1.50879
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1.55273
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1.4502
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1.55273
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1.40625
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1.30371
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1.52344
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1.65527
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1.4502
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1.46484
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1.66992
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1.58203
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1.62598
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1.65527
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1.71387
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1.53809
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-BD12": {
+      "info": {
+        "id": "OMNI-BD12",
+        "raw_id": "BD12",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 94.073889,
+        "latitude": 10.515278,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Bay of Bengal",
+        "basin": "Andaman Sea",
+        "depth_m": 2100,
+        "mooring_type": "EEZ / Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 29.293,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1011.23,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "humidity": {
+          "value": 77.9,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 30.242,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 3.778,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 352.768,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 28.898
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 29.034
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 29.298
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 29.318
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 29.124
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 29.22
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 29.528
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 29.532
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 29.638
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 29.509
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 29.413
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 29.292
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 25.324
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 28.667
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 28.506
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 29.126
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 29.476
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 29.308
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 29.484
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 28.621
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 28.39
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 26.16
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 29.247
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 29.293
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1009.26
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1010.5
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1012.72
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1011.78
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1010.72
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1012.02
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1013.43
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1011.71
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1009.6
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1010.64
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1012.66
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1012.25
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1011.26
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1011.57
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1013.49
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1012.17
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1009.55
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1010.46
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1012.52
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1012.24
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1010.46
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1011.53
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1012.75
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1011.23
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-BD13": {
+      "info": {
+        "id": "OMNI-BD13",
+        "raw_id": "BD13",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 86.996944,
+        "latitude": 13.99,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Bay of Bengal",
+        "basin": "Southern Bay of Bengal",
+        "depth_m": 3600,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 28.215,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1011.43,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "humidity": {
+          "value": 73.77,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 30.408,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 0.708,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 275.483,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 29.685
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 29.602
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 29.451
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 29.28
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 28.384
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 28.764
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 30.016
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 29.873
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 30.259
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 28.733
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 28.611
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 28.997
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 29.272
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 28.477
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 28.484
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 29.366
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 28.216
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 26.93
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 27.516
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 28.104
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 26.234
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 26.797
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 27.458
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 28.215
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1009.73
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1010.37
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1011.99
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1011.5
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1009.93
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1010.6
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1012.83
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1011.46
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1009.37
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1010.17
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1012.21
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1011.83
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1010.43
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1010.68
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1012.33
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1011.43
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1008.86
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1010.48
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1012.65
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1012.07
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1010.55
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1010.65
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1012.29
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1011.43
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-BD14": {
+      "info": {
+        "id": "OMNI-BD14",
+        "raw_id": "BD14",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Not Reporting",
+        "longitude": 88.233333,
+        "latitude": 6.570556,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Bay of Bengal",
+        "basin": "South-East Bay of Bengal",
+        "depth_m": 3700,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 29.146,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1011.15,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "significant_wave_height": {
+          "value": 1.14,
+          "unit": "m",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Significant Wave Height"
+        },
+        "humidity": {
+          "value": 74.79,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 30.13,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 4.929,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 295.724,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 29.21
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 28.883
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 28.887
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 28.264
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 28.182
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 28.476
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 27.347
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 26.007
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 27.582
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 28.043
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 28.018
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 28.246
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 28.234
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 28.355
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 29.381
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 29.011
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 29.089
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 28.047
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 26.751
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 28.119
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 28.288
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 28.548
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 29.357
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 29.146
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1008.92
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1010.1
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1011.74
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1011.54
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1009.3
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1009.76
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1012.93
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1011.83
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1009.76
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1010.18
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1012.45
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1012.18
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1010.06
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1010.65
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1012.81
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1011.36
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1009.6
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1010.44
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1012.58
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1011.76
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1009.62
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1010.04
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1012.01
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1011.15
+          }
+        ],
+        "significant_wave_height": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 0.966
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1.105
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1.276
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1.087
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1.074
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1.03
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1.026
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1.172
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1.045
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 0.964
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 0.994
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1.032
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1.031
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1.081
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1.117
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1.133
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1.079
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1.206
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1.384
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1.253
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1.319
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1.169
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1.378
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1.143
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-AD06": {
+      "info": {
+        "id": "OMNI-AD06",
+        "raw_id": "AD06",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 67.45,
+        "latitude": 18.495,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Arabian Sea",
+        "basin": "Central Arabian Sea",
+        "depth_m": 3200,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "STALE / OFFLINE",
+      "latest_observation_time": "2026-06-06T21:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 30.326,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1780779600000,
+          "timestamp_utc": "2026-06-06T21:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1006.02,
+          "unit": "hPa",
+          "timestamp_epoch": 1780779600000,
+          "timestamp_utc": "2026-06-06T21:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "significant_wave_height": {
+          "value": 2.21,
+          "unit": "m",
+          "timestamp_epoch": 1780779600000,
+          "timestamp_utc": "2026-06-06T21:00:00+00:00",
+          "name": "Significant Wave Height"
+        },
+        "humidity": {
+          "value": 77.3,
+          "unit": "%",
+          "timestamp_epoch": 1780779600000,
+          "timestamp_utc": "2026-06-06T21:00:00+00:00",
+          "name": "Relative Humidity"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1769364000000,
+            "time": "2026-01-25T18:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769374800000,
+            "time": "2026-01-25T21:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769385600000,
+            "time": "2026-01-26T00:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769396400000,
+            "time": "2026-01-26T03:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769407200000,
+            "time": "2026-01-26T06:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769418000000,
+            "time": "2026-01-26T09:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769428800000,
+            "time": "2026-01-26T12:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769439600000,
+            "time": "2026-01-26T15:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769450400000,
+            "time": "2026-01-26T18:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769461200000,
+            "time": "2026-01-26T21:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1769472000000,
+            "time": "2026-01-27T00:00:00+00:00",
+            "value": 39.998474
+          },
+          {
+            "epoch": 1780650000000,
+            "time": "2026-06-05T09:00:00+00:00",
+            "value": 31.329
+          },
+          {
+            "epoch": 1780660800000,
+            "time": "2026-06-05T12:00:00+00:00",
+            "value": 31.088
+          },
+          {
+            "epoch": 1780671600000,
+            "time": "2026-06-05T15:00:00+00:00",
+            "value": 30.859
+          },
+          {
+            "epoch": 1780682400000,
+            "time": "2026-06-05T18:00:00+00:00",
+            "value": 30.851
+          },
+          {
+            "epoch": 1780693200000,
+            "time": "2026-06-05T21:00:00+00:00",
+            "value": 30.435
+          },
+          {
+            "epoch": 1780704000000,
+            "time": "2026-06-06T00:00:00+00:00",
+            "value": 30.586
+          },
+          {
+            "epoch": 1780714800000,
+            "time": "2026-06-06T03:00:00+00:00",
+            "value": 30.717
+          },
+          {
+            "epoch": 1780725600000,
+            "time": "2026-06-06T06:00:00+00:00",
+            "value": 30.788
+          },
+          {
+            "epoch": 1780736400000,
+            "time": "2026-06-06T09:00:00+00:00",
+            "value": 31.115
+          },
+          {
+            "epoch": 1780747200000,
+            "time": "2026-06-06T12:00:00+00:00",
+            "value": 31.506
+          },
+          {
+            "epoch": 1780758000000,
+            "time": "2026-06-06T15:00:00+00:00",
+            "value": 30.931
+          },
+          {
+            "epoch": 1780768800000,
+            "time": "2026-06-06T18:00:00+00:00",
+            "value": 30.764
+          },
+          {
+            "epoch": 1780779600000,
+            "time": "2026-06-06T21:00:00+00:00",
+            "value": 30.326
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1769364000000,
+            "time": "2026-01-25T18:00:00+00:00",
+            "value": 1016.06445
+          },
+          {
+            "epoch": 1769374800000,
+            "time": "2026-01-25T21:00:00+00:00",
+            "value": 1014.2334
+          },
+          {
+            "epoch": 1769385600000,
+            "time": "2026-01-26T00:00:00+00:00",
+            "value": 1014.01367
+          },
+          {
+            "epoch": 1769396400000,
+            "time": "2026-01-26T03:00:00+00:00",
+            "value": 1016.43066
+          },
+          {
+            "epoch": 1769407200000,
+            "time": "2026-01-26T06:00:00+00:00",
+            "value": 1017.5293
+          },
+          {
+            "epoch": 1769418000000,
+            "time": "2026-01-26T09:00:00+00:00",
+            "value": 1014.81934
+          },
+          {
+            "epoch": 1769428800000,
+            "time": "2026-01-26T12:00:00+00:00",
+            "value": 1014.45313
+          },
+          {
+            "epoch": 1769439600000,
+            "time": "2026-01-26T15:00:00+00:00",
+            "value": 1016.28418
+          },
+          {
+            "epoch": 1769450400000,
+            "time": "2026-01-26T18:00:00+00:00",
+            "value": 1016.57715
+          },
+          {
+            "epoch": 1769461200000,
+            "time": "2026-01-26T21:00:00+00:00",
+            "value": 1016.21094
+          },
+          {
+            "epoch": 1769472000000,
+            "time": "2026-01-27T00:00:00+00:00",
+            "value": 1015.99121
+          },
+          {
+            "epoch": 1780650000000,
+            "time": "2026-06-05T09:00:00+00:00",
+            "value": 1004.43
+          },
+          {
+            "epoch": 1780660800000,
+            "time": "2026-06-05T12:00:00+00:00",
+            "value": 1003.38
+          },
+          {
+            "epoch": 1780671600000,
+            "time": "2026-06-05T15:00:00+00:00",
+            "value": 1004.43
+          },
+          {
+            "epoch": 1780682400000,
+            "time": "2026-06-05T18:00:00+00:00",
+            "value": 1005.13
+          },
+          {
+            "epoch": 1780693200000,
+            "time": "2026-06-05T21:00:00+00:00",
+            "value": 1003.97
+          },
+          {
+            "epoch": 1780704000000,
+            "time": "2026-06-06T00:00:00+00:00",
+            "value": 1004.02
+          },
+          {
+            "epoch": 1780714800000,
+            "time": "2026-06-06T03:00:00+00:00",
+            "value": 1005.25
+          },
+          {
+            "epoch": 1780725600000,
+            "time": "2026-06-06T06:00:00+00:00",
+            "value": 1006.69
+          },
+          {
+            "epoch": 1780736400000,
+            "time": "2026-06-06T09:00:00+00:00",
+            "value": 1005.58
+          },
+          {
+            "epoch": 1780747200000,
+            "time": "2026-06-06T12:00:00+00:00",
+            "value": 1005.01
+          },
+          {
+            "epoch": 1780758000000,
+            "time": "2026-06-06T15:00:00+00:00",
+            "value": 1006.04
+          },
+          {
+            "epoch": 1780768800000,
+            "time": "2026-06-06T18:00:00+00:00",
+            "value": 1007.5
+          },
+          {
+            "epoch": 1780779600000,
+            "time": "2026-06-06T21:00:00+00:00",
+            "value": 1006.02
+          }
+        ],
+        "significant_wave_height": [
+          {
+            "epoch": 1769331600000,
+            "time": "2026-01-25T09:00:00+00:00",
+            "value": 0.80566
+          },
+          {
+            "epoch": 1769342400000,
+            "time": "2026-01-25T12:00:00+00:00",
+            "value": 0.87891
+          },
+          {
+            "epoch": 1769353200000,
+            "time": "2026-01-25T15:00:00+00:00",
+            "value": 0.86426
+          },
+          {
+            "epoch": 1769364000000,
+            "time": "2026-01-25T18:00:00+00:00",
+            "value": 1.06934
+          },
+          {
+            "epoch": 1769374800000,
+            "time": "2026-01-25T21:00:00+00:00",
+            "value": 1.09863
+          },
+          {
+            "epoch": 1769385600000,
+            "time": "2026-01-26T00:00:00+00:00",
+            "value": 1.05469
+          },
+          {
+            "epoch": 1769396400000,
+            "time": "2026-01-26T03:00:00+00:00",
+            "value": 0.95215
+          },
+          {
+            "epoch": 1769407200000,
+            "time": "2026-01-26T06:00:00+00:00",
+            "value": 0.92285
+          },
+          {
+            "epoch": 1769418000000,
+            "time": "2026-01-26T09:00:00+00:00",
+            "value": 0.84961
+          },
+          {
+            "epoch": 1769428800000,
+            "time": "2026-01-26T12:00:00+00:00",
+            "value": 0.76172
+          },
+          {
+            "epoch": 1769439600000,
+            "time": "2026-01-26T15:00:00+00:00",
+            "value": 0.67383
+          },
+          {
+            "epoch": 1769450400000,
+            "time": "2026-01-26T18:00:00+00:00",
+            "value": 0.62988
+          },
+          {
+            "epoch": 1769461200000,
+            "time": "2026-01-26T21:00:00+00:00",
+            "value": 0.58594
+          },
+          {
+            "epoch": 1769472000000,
+            "time": "2026-01-27T00:00:00+00:00",
+            "value": 0.64453
+          },
+          {
+            "epoch": 1780650000000,
+            "time": "2026-06-05T09:00:00+00:00",
+            "value": 2.156
+          },
+          {
+            "epoch": 1780660800000,
+            "time": "2026-06-05T12:00:00+00:00",
+            "value": 2.277
+          },
+          {
+            "epoch": 1780671600000,
+            "time": "2026-06-05T15:00:00+00:00",
+            "value": 2.118
+          },
+          {
+            "epoch": 1780682400000,
+            "time": "2026-06-05T18:00:00+00:00",
+            "value": 2.305
+          },
+          {
+            "epoch": 1780693200000,
+            "time": "2026-06-05T21:00:00+00:00",
+            "value": 2.396
+          },
+          {
+            "epoch": 1780714800000,
+            "time": "2026-06-06T03:00:00+00:00",
+            "value": 2.053
+          },
+          {
+            "epoch": 1780725600000,
+            "time": "2026-06-06T06:00:00+00:00",
+            "value": 2.34
+          },
+          {
+            "epoch": 1780736400000,
+            "time": "2026-06-06T09:00:00+00:00",
+            "value": 2.296
+          },
+          {
+            "epoch": 1780747200000,
+            "time": "2026-06-06T12:00:00+00:00",
+            "value": 2.072
+          },
+          {
+            "epoch": 1780779600000,
+            "time": "2026-06-06T21:00:00+00:00",
+            "value": 2.207
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-AD07": {
+      "info": {
+        "id": "OMNI-AD07",
+        "raw_id": "AD07",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 68.975833,
+        "latitude": 14.931389,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Arabian Sea",
+        "basin": "Northern Arabian Sea",
+        "depth_m": 2800,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "RECENT (< 48h)",
+      "latest_observation_time": "2026-10-13T09:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 30.305,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1791882000000,
+          "timestamp_utc": "2026-10-13T09:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1010.99,
+          "unit": "hPa",
+          "timestamp_epoch": 1791882000000,
+          "timestamp_utc": "2026-10-13T09:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "significant_wave_height": {
+          "value": 0.86,
+          "unit": "m",
+          "timestamp_epoch": 1791882000000,
+          "timestamp_utc": "2026-10-13T09:00:00+00:00",
+          "name": "Significant Wave Height"
+        },
+        "humidity": {
+          "value": 43.37,
+          "unit": "%",
+          "timestamp_epoch": 1781686800000,
+          "timestamp_utc": "2026-06-17T09:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 30.216,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-13T09:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 5.913,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-13T09:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 37.57,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-13T09:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791180000000,
+            "time": "2026-10-05T06:00:00+00:00",
+            "value": 29.513
+          },
+          {
+            "epoch": 1791190800000,
+            "time": "2026-10-05T09:00:00+00:00",
+            "value": 29.575
+          },
+          {
+            "epoch": 1791201600000,
+            "time": "2026-10-05T12:00:00+00:00",
+            "value": 29.844
+          },
+          {
+            "epoch": 1791255600000,
+            "time": "2026-10-06T03:00:00+00:00",
+            "value": 28.797
+          },
+          {
+            "epoch": 1791266400000,
+            "time": "2026-10-06T06:00:00+00:00",
+            "value": 29.075
+          },
+          {
+            "epoch": 1791277200000,
+            "time": "2026-10-06T09:00:00+00:00",
+            "value": 29.526
+          },
+          {
+            "epoch": 1791288000000,
+            "time": "2026-10-06T12:00:00+00:00",
+            "value": 29.703
+          },
+          {
+            "epoch": 1791342000000,
+            "time": "2026-10-07T03:00:00+00:00",
+            "value": 29.052
+          },
+          {
+            "epoch": 1791352800000,
+            "time": "2026-10-07T06:00:00+00:00",
+            "value": 29.417
+          },
+          {
+            "epoch": 1791428400000,
+            "time": "2026-10-08T03:00:00+00:00",
+            "value": 28.967
+          },
+          {
+            "epoch": 1791450000000,
+            "time": "2026-10-08T09:00:00+00:00",
+            "value": 29.499
+          },
+          {
+            "epoch": 1791514800000,
+            "time": "2026-10-09T03:00:00+00:00",
+            "value": 29.138
+          },
+          {
+            "epoch": 1791525600000,
+            "time": "2026-10-09T06:00:00+00:00",
+            "value": 29.581
+          },
+          {
+            "epoch": 1791536400000,
+            "time": "2026-10-09T09:00:00+00:00",
+            "value": 29.768
+          },
+          {
+            "epoch": 1791547200000,
+            "time": "2026-10-09T12:00:00+00:00",
+            "value": 29.958
+          },
+          {
+            "epoch": 1791601200000,
+            "time": "2026-10-10T03:00:00+00:00",
+            "value": 29.063
+          },
+          {
+            "epoch": 1791612000000,
+            "time": "2026-10-10T06:00:00+00:00",
+            "value": 29.525
+          },
+          {
+            "epoch": 1791622800000,
+            "time": "2026-10-10T09:00:00+00:00",
+            "value": 29.929
+          },
+          {
+            "epoch": 1791698400000,
+            "time": "2026-10-11T06:00:00+00:00",
+            "value": 29.579
+          },
+          {
+            "epoch": 1791709200000,
+            "time": "2026-10-11T09:00:00+00:00",
+            "value": 29.907
+          },
+          {
+            "epoch": 1791784800000,
+            "time": "2026-10-12T06:00:00+00:00",
+            "value": 30.14
+          },
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 30.284
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 30.312
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 30.305
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791180000000,
+            "time": "2026-10-05T06:00:00+00:00",
+            "value": 1014.2
+          },
+          {
+            "epoch": 1791190800000,
+            "time": "2026-10-05T09:00:00+00:00",
+            "value": 1011.75
+          },
+          {
+            "epoch": 1791201600000,
+            "time": "2026-10-05T12:00:00+00:00",
+            "value": 1011.1
+          },
+          {
+            "epoch": 1791255600000,
+            "time": "2026-10-06T03:00:00+00:00",
+            "value": 1013.96
+          },
+          {
+            "epoch": 1791266400000,
+            "time": "2026-10-06T06:00:00+00:00",
+            "value": 1014.36
+          },
+          {
+            "epoch": 1791277200000,
+            "time": "2026-10-06T09:00:00+00:00",
+            "value": 1012.1
+          },
+          {
+            "epoch": 1791288000000,
+            "time": "2026-10-06T12:00:00+00:00",
+            "value": 1011.43
+          },
+          {
+            "epoch": 1791342000000,
+            "time": "2026-10-07T03:00:00+00:00",
+            "value": 1014.94
+          },
+          {
+            "epoch": 1791352800000,
+            "time": "2026-10-07T06:00:00+00:00",
+            "value": 1016.02
+          },
+          {
+            "epoch": 1791428400000,
+            "time": "2026-10-08T03:00:00+00:00",
+            "value": 1015.44
+          },
+          {
+            "epoch": 1791450000000,
+            "time": "2026-10-08T09:00:00+00:00",
+            "value": 1012.8
+          },
+          {
+            "epoch": 1791514800000,
+            "time": "2026-10-09T03:00:00+00:00",
+            "value": 1013.74
+          },
+          {
+            "epoch": 1791525600000,
+            "time": "2026-10-09T06:00:00+00:00",
+            "value": 1013.88
+          },
+          {
+            "epoch": 1791536400000,
+            "time": "2026-10-09T09:00:00+00:00",
+            "value": 1011.39
+          },
+          {
+            "epoch": 1791547200000,
+            "time": "2026-10-09T12:00:00+00:00",
+            "value": 1010.48
+          },
+          {
+            "epoch": 1791601200000,
+            "time": "2026-10-10T03:00:00+00:00",
+            "value": 1011.78
+          },
+          {
+            "epoch": 1791612000000,
+            "time": "2026-10-10T06:00:00+00:00",
+            "value": 1012.71
+          },
+          {
+            "epoch": 1791622800000,
+            "time": "2026-10-10T09:00:00+00:00",
+            "value": 1010.54
+          },
+          {
+            "epoch": 1791698400000,
+            "time": "2026-10-11T06:00:00+00:00",
+            "value": 1012.79
+          },
+          {
+            "epoch": 1791709200000,
+            "time": "2026-10-11T09:00:00+00:00",
+            "value": 1010.75
+          },
+          {
+            "epoch": 1791784800000,
+            "time": "2026-10-12T06:00:00+00:00",
+            "value": 1013.8
+          },
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1011.7
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1013.59
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1010.99
+          }
+        ],
+        "significant_wave_height": [
+          {
+            "epoch": 1791093600000,
+            "time": "2026-10-04T06:00:00+00:00",
+            "value": 0.607
+          },
+          {
+            "epoch": 1791180000000,
+            "time": "2026-10-05T06:00:00+00:00",
+            "value": 0.549
+          },
+          {
+            "epoch": 1791190800000,
+            "time": "2026-10-05T09:00:00+00:00",
+            "value": 0.523
+          },
+          {
+            "epoch": 1791201600000,
+            "time": "2026-10-05T12:00:00+00:00",
+            "value": 0.479
+          },
+          {
+            "epoch": 1791255600000,
+            "time": "2026-10-06T03:00:00+00:00",
+            "value": 0.468
+          },
+          {
+            "epoch": 1791266400000,
+            "time": "2026-10-06T06:00:00+00:00",
+            "value": 0.482
+          },
+          {
+            "epoch": 1791277200000,
+            "time": "2026-10-06T09:00:00+00:00",
+            "value": 0.445
+          },
+          {
+            "epoch": 1791288000000,
+            "time": "2026-10-06T12:00:00+00:00",
+            "value": 0.53
+          },
+          {
+            "epoch": 1791342000000,
+            "time": "2026-10-07T03:00:00+00:00",
+            "value": 0.652
+          },
+          {
+            "epoch": 1791352800000,
+            "time": "2026-10-07T06:00:00+00:00",
+            "value": 0.706
+          },
+          {
+            "epoch": 1791428400000,
+            "time": "2026-10-08T03:00:00+00:00",
+            "value": 0.626
+          },
+          {
+            "epoch": 1791450000000,
+            "time": "2026-10-08T09:00:00+00:00",
+            "value": 0.682
+          },
+          {
+            "epoch": 1791514800000,
+            "time": "2026-10-09T03:00:00+00:00",
+            "value": 0.676
+          },
+          {
+            "epoch": 1791525600000,
+            "time": "2026-10-09T06:00:00+00:00",
+            "value": 0.626
+          },
+          {
+            "epoch": 1791536400000,
+            "time": "2026-10-09T09:00:00+00:00",
+            "value": 0.593
+          },
+          {
+            "epoch": 1791547200000,
+            "time": "2026-10-09T12:00:00+00:00",
+            "value": 0.681
+          },
+          {
+            "epoch": 1791601200000,
+            "time": "2026-10-10T03:00:00+00:00",
+            "value": 0.566
+          },
+          {
+            "epoch": 1791612000000,
+            "time": "2026-10-10T06:00:00+00:00",
+            "value": 0.655
+          },
+          {
+            "epoch": 1791622800000,
+            "time": "2026-10-10T09:00:00+00:00",
+            "value": 0.626
+          },
+          {
+            "epoch": 1791698400000,
+            "time": "2026-10-11T06:00:00+00:00",
+            "value": 0.553
+          },
+          {
+            "epoch": 1791709200000,
+            "time": "2026-10-11T09:00:00+00:00",
+            "value": 0.516
+          },
+          {
+            "epoch": 1791784800000,
+            "time": "2026-10-12T06:00:00+00:00",
+            "value": 0.861
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 0.874
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 0.86
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-AD08": {
+      "info": {
+        "id": "OMNI-AD08",
+        "raw_id": "AD08",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 68.632778,
+        "latitude": 12.068056,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Arabian Sea",
+        "basin": "Eastern Arabian Sea",
+        "depth_m": 3100,
+        "mooring_type": "Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 29.663,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1011.33,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "humidity": {
+          "value": 75.68,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 30.583,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 3.113,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 275.715,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 30.245
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 30.051
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 30.024
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 29.699
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 28.994
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 29.046
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 29.675
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 30.005
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 30.326
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 30.175
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 29.889
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 29.723
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 29.387
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 29.174
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 29.291
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 29.326
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 30.267
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 30.286
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 29.605
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 29.634
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 29.379
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 29.189
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 29.358
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 29.663
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1011.25
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1010.87
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1012.32
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1012.87
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1010.96
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1010.68
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1012.92
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1013.25
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1010.67
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1010.17
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1011.77
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1012.08
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1011.08
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1010.56
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1011.72
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1012.42
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1010.21
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1009.46
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1010.97
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1012.2
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1009.86
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1009.7
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1011.18
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1011.33
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-AD09": {
+      "info": {
+        "id": "OMNI-AD09",
+        "raw_id": "AD09",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 73.298333,
+        "latitude": 8.183056,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Arabian Sea",
+        "basin": "South-East Arabian Sea (Lakshadweep)",
+        "depth_m": 2600,
+        "mooring_type": "EEZ / Coastal Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 30.387,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1011.23,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "significant_wave_height": {
+          "value": 0.89,
+          "unit": "m",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Significant Wave Height"
+        },
+        "humidity": {
+          "value": 69.88,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 30.738,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 2.171,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 139.644,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 30.144
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 27.932
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 28.469
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 28.542
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 28.412
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 28.74
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 29.231
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 29.677
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 29.826
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 29.911
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 29.607
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 29.524
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 29.237
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 29.098
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 29.583
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 29.838
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 29.874
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 29.767
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 29.721
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 29.517
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 29.166
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 29.031
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 30.128
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 30.387
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1010.58
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1010.76
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1012.16
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1012.66
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1010.35
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1010.51
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1012.78
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1011.83
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1009.74
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1009.42
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1010.91
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1012.44
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1010
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1009.76
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1011.64
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1011.44
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1009.26
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1008.64
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1010.56
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1011.74
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1009.45
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1008.9
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1011.05
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1011.23
+          }
+        ],
+        "significant_wave_height": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 0.785
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 0.842
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 0.879
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 0.831
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 0.745
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 0.805
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 0.883
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 0.768
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 0.795
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 0.784
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 0.854
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 0.842
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 0.899
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 0.916
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1.028
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1.014
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 0.906
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 0.911
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 0.928
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 0.867
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 0.864
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 0.92
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 0.978
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 0.885
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    },
+    "OMNI-AD10": {
+      "info": {
+        "id": "OMNI-AD10",
+        "raw_id": "AD10",
+        "agency": "NIOT, INDIA",
+        "programme": "OMNI",
+        "reporting": "Reporting",
+        "longitude": 72.587222,
+        "latitude": 10.321667,
+        "wfs_url": "https://www.incois.gov.in/geoserver/JointPortal/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=JointPortal:Omni_Buoy&outputFormat=application/json",
+        "region": "Arabian Sea",
+        "basin": "South-West Arabian Sea",
+        "depth_m": 3400,
+        "mooring_type": "EEZ / Deep Sea Moored Buoy"
+      },
+      "status": "LIVE / OPERATIONAL",
+      "latest_observation_time": "2026-10-15T06:00:00+00:00",
+      "latest_observation": {
+        "air_temperature": {
+          "value": 30.01,
+          "unit": "\u00b0C",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Air Temperature"
+        },
+        "air_pressure": {
+          "value": 1011.11,
+          "unit": "hPa",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Atmospheric Pressure"
+        },
+        "humidity": {
+          "value": 71.84,
+          "unit": "%",
+          "timestamp_epoch": 1792044000000,
+          "timestamp_utc": "2026-10-15T06:00:00+00:00",
+          "name": "Relative Humidity"
+        },
+        "sst": {
+          "value": 31.386,
+          "unit": "\u00b0C",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Sea Surface Temperature",
+          "note": "From recent OMNI telemetry record"
+        },
+        "wind_speed": {
+          "value": 3.213,
+          "unit": "m/s",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Speed"
+        },
+        "wind_direction": {
+          "value": 61.416,
+          "unit": "\u00b0",
+          "timestamp_utc": "2026-10-14T12:00:00+00:00",
+          "name": "Wind Direction"
+        }
+      },
+      "recent_history": {
+        "air_temperature": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 30.501
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 31.311
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 30.026
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 29.77
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 29.393
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 29.425
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 29.968
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 30.092
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 30.493
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 30.519
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 30.036
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 29.876
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 29.553
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 29.45
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 29.834
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 30.266
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 30.446
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 30.532
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 30.144
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 29.973
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 29.54
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 29.454
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 29.721
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 30.01
+          }
+        ],
+        "air_pressure": [
+          {
+            "epoch": 1791795600000,
+            "time": "2026-10-12T09:00:00+00:00",
+            "value": 1010.95
+          },
+          {
+            "epoch": 1791806400000,
+            "time": "2026-10-12T12:00:00+00:00",
+            "value": 1010.64
+          },
+          {
+            "epoch": 1791817200000,
+            "time": "2026-10-12T15:00:00+00:00",
+            "value": 1012.14
+          },
+          {
+            "epoch": 1791828000000,
+            "time": "2026-10-12T18:00:00+00:00",
+            "value": 1012.55
+          },
+          {
+            "epoch": 1791838800000,
+            "time": "2026-10-12T21:00:00+00:00",
+            "value": 1010.54
+          },
+          {
+            "epoch": 1791849600000,
+            "time": "2026-10-13T00:00:00+00:00",
+            "value": 1010.54
+          },
+          {
+            "epoch": 1791860400000,
+            "time": "2026-10-13T03:00:00+00:00",
+            "value": 1012.65
+          },
+          {
+            "epoch": 1791871200000,
+            "time": "2026-10-13T06:00:00+00:00",
+            "value": 1012.57
+          },
+          {
+            "epoch": 1791882000000,
+            "time": "2026-10-13T09:00:00+00:00",
+            "value": 1009.84
+          },
+          {
+            "epoch": 1791892800000,
+            "time": "2026-10-13T12:00:00+00:00",
+            "value": 1009.42
+          },
+          {
+            "epoch": 1791903600000,
+            "time": "2026-10-13T15:00:00+00:00",
+            "value": 1010.99
+          },
+          {
+            "epoch": 1791914400000,
+            "time": "2026-10-13T18:00:00+00:00",
+            "value": 1011.91
+          },
+          {
+            "epoch": 1791925200000,
+            "time": "2026-10-13T21:00:00+00:00",
+            "value": 1010.34
+          },
+          {
+            "epoch": 1791936000000,
+            "time": "2026-10-14T00:00:00+00:00",
+            "value": 1009.86
+          },
+          {
+            "epoch": 1791946800000,
+            "time": "2026-10-14T03:00:00+00:00",
+            "value": 1011.87
+          },
+          {
+            "epoch": 1791957600000,
+            "time": "2026-10-14T06:00:00+00:00",
+            "value": 1011.64
+          },
+          {
+            "epoch": 1791968400000,
+            "time": "2026-10-14T09:00:00+00:00",
+            "value": 1009.12
+          },
+          {
+            "epoch": 1791979200000,
+            "time": "2026-10-14T12:00:00+00:00",
+            "value": 1008.76
+          },
+          {
+            "epoch": 1791990000000,
+            "time": "2026-10-14T15:00:00+00:00",
+            "value": 1010.41
+          },
+          {
+            "epoch": 1792000800000,
+            "time": "2026-10-14T18:00:00+00:00",
+            "value": 1011.28
+          },
+          {
+            "epoch": 1792011600000,
+            "time": "2026-10-14T21:00:00+00:00",
+            "value": 1009.09
+          },
+          {
+            "epoch": 1792022400000,
+            "time": "2026-10-15T00:00:00+00:00",
+            "value": 1009.02
+          },
+          {
+            "epoch": 1792033200000,
+            "time": "2026-10-15T03:00:00+00:00",
+            "value": 1011.26
+          },
+          {
+            "epoch": 1792044000000,
+            "time": "2026-10-15T06:00:00+00:00",
+            "value": 1011.11
+          }
+        ]
+      },
+      "available_options": [
+        "air_pressure",
+        "air_temperature",
+        "humidity",
+        "rainfall",
+        "wind_direction",
+        "wind_speed",
+        "wind_gust",
+        "irradiance",
+        "radiationin",
+        "dvs_direction_1_20m",
+        "dvs_direction_1_25m",
+        "dvs_direction_003m",
+        "dvs_speed_1_20m",
+        "dvs_speed_1_25m",
+        "dvs_speed_003m",
+        "adcp_direction_015m",
+        "adcp_direction_025m",
+        "adcp_direction_035m",
+        "adcp_direction_050m",
+        "adcp_direction_075m",
+        "adcp_direction_100m",
+        "adcp_speed_015m",
+        "adcp_speed_025m",
+        "adcp_speed_035m",
+        "adcp_speed_050m",
+        "adcp_speed_075m",
+        "adcp_speed_100m",
+        "water_temperature_0_5m",
+        "water_temperature_001m",
+        "water_temperature_005m",
+        "water_temperature_010m",
+        "water_temperature_015m",
+        "water_temperature_020m",
+        "water_temperature_030m",
+        "water_temperature_050m",
+        "water_temperature_075m",
+        "water_temperature_100m",
+        "water_temperature_200m",
+        "water_temperature_500m",
+        "salinity_0_5m",
+        "salinity_001m",
+        "salinity_005m",
+        "salinity_010m",
+        "salinity_015m",
+        "salinity_020m",
+        "salinity_030m",
+        "salinity_050m",
+        "salinity_075m",
+        "salinity_100m",
+        "salinity_200m",
+        "salinity_500m",
+        "hm0"
+      ]
+    }
+  }
+}

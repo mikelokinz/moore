@@ -324,89 +324,150 @@ export const MooringPartCallout: React.FC<MooringPartCalloutProps> = ({
             {data.purpose}
           </div>
 
-          {/* Live Dynamic Load Readout */}
+          {/* Live Dynamic Tension & Load Telemetry */}
           {loadCalc && (
             <div
               style={{
                 background: 'rgba(6, 182, 212, 0.08)',
-                border: '1px solid rgba(34, 211, 238, 0.35)',
-                borderRadius: '6px',
-                padding: '8px 10px',
+                border: `1px solid ${
+                  loadCalc.tensionState === 'CRITICAL_TAUT' ? 'rgba(239, 68, 68, 0.5)' :
+                  loadCalc.tensionState === 'ELEVATED' ? 'rgba(245, 158, 11, 0.5)' :
+                  'rgba(34, 211, 238, 0.4)'
+                }`,
+                borderRadius: '7px',
+                padding: '9px 11px',
                 marginBottom: '8px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '6px',
+                gap: '7px',
               }}
             >
+              {/* Header: Tension Status Tag */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '9px', fontWeight: 800, color: '#22d3ee', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Activity size={11} /> LIVE LOAD TELEMETRY
+                <span style={{ fontSize: '9.5px', fontWeight: 800, color: '#22d3ee', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Activity size={12} color="#22d3ee" /> DYNAMIC TENSION TELEMETRY
                 </span>
                 <span
                   style={{
                     fontSize: '8px',
                     fontFamily: 'monospace',
                     fontWeight: 700,
-                    padding: '1px 5px',
+                    padding: '2px 6px',
                     borderRadius: '3px',
                     background:
-                      loadCalc.status === 'CRITICAL' ? 'rgba(239, 68, 68, 0.2)' :
-                      loadCalc.status === 'WARNING' ? 'rgba(245, 158, 11, 0.2)' :
-                      'rgba(34, 211, 238, 0.2)',
+                      loadCalc.tensionState === 'CRITICAL_TAUT' ? 'rgba(239, 68, 68, 0.25)' :
+                      loadCalc.tensionState === 'ELEVATED' ? 'rgba(245, 158, 11, 0.25)' :
+                      loadCalc.tensionState === 'SLACK' ? 'rgba(148, 163, 184, 0.25)' :
+                      'rgba(34, 211, 238, 0.25)',
                     color:
-                      loadCalc.status === 'CRITICAL' ? '#ef4444' :
-                      loadCalc.status === 'WARNING' ? '#f59e0b' :
+                      loadCalc.tensionState === 'CRITICAL_TAUT' ? '#ef4444' :
+                      loadCalc.tensionState === 'ELEVATED' ? '#f59e0b' :
+                      loadCalc.tensionState === 'SLACK' ? '#94a3b8' :
                       '#22d3ee',
+                    border: `1px solid ${
+                      loadCalc.tensionState === 'CRITICAL_TAUT' ? '#ef4444' :
+                      loadCalc.tensionState === 'ELEVATED' ? '#f59e0b' :
+                      loadCalc.tensionState === 'SLACK' ? '#64748b' :
+                      '#22d3ee'
+                    }`,
                   }}
                 >
-                  SF ≥ {loadCalc.safetyFactor} ({loadCalc.status})
+                  {loadCalc.tensionState} · SF ≥ {loadCalc.safetyFactor}
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', fontSize: '9px', fontFamily: 'monospace' }}>
+              {/* Hero Metric: Dynamic Axial Tension */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '6px' }}>
                 <div>
-                  <span style={{ color: '#94a3b8', fontSize: '8px' }}>WORKING LOAD:</span>
-                  <div style={{ color: '#ffffff', fontWeight: 700, fontSize: '11px' }}>
-                    {loadCalc.workingTension_kN} kN
+                  <div style={{ fontSize: '8px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                    AXIAL LINE TENSION (T)
                   </div>
-                  <div style={{ color: '#64748b', fontSize: '7.5px' }}>
-                    {loadCalc.workingTension_kgf.toLocaleString()} kgf
+                  <div style={{ fontSize: '18px', fontWeight: 900, color: '#ffffff', fontFamily: 'monospace', lineHeight: 1.1 }}>
+                    {loadCalc.workingTension_kN}{' '}
+                    <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>kN</span>
+                  </div>
+                  <div style={{ color: '#64748b', fontSize: '7.5px', fontFamily: 'monospace' }}>
+                    ≈ {loadCalc.workingTension_kgf.toLocaleString()} kgf · {loadCalc.workingTension_lbf.toLocaleString()} lbf
                   </div>
                 </div>
-                <div>
-                  <span style={{ color: '#94a3b8', fontSize: '8px' }}>MBL STRENGTH:</span>
-                  <div style={{ color: '#38bdf8', fontWeight: 700, fontSize: '11px' }}>
-                    {loadCalc.mbl_kN} kN
+
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '8px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                    WAVE SWELL OSCILLATION
                   </div>
-                  <div style={{ color: '#64748b', fontSize: '7.5px' }}>
-                    Utilized: {loadCalc.utilization_percent}%
+                  <div style={{ fontSize: '11.5px', fontWeight: 700, color: '#38bdf8', fontFamily: 'monospace' }}>
+                    ±{loadCalc.dynamicWaveTension_kN} kN
+                  </div>
+                  <div style={{ fontSize: '7.5px', color: '#64748b', fontFamily: 'monospace' }}>
+                    DAF {loadCalc.dynamicAmplificationFactor}x · Peak {loadCalc.peakSnapTension_kN} kN
                   </div>
                 </div>
               </div>
 
+              {/* 3D Tension Vector Breakdown & Catenary Angle */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '5px', fontSize: '8.5px', fontFamily: 'monospace', background: 'rgba(15, 23, 42, 0.6)', padding: '5px 7px', borderRadius: '4px' }}>
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '7.5px', display: 'block' }}>CATENARY ANGLE</span>
+                  <strong style={{ color: '#ffffff' }}>{loadCalc.catenaryAngle_deg}°</strong>
+                  <span style={{ color: '#64748b', fontSize: '7px', display: 'block' }}>from vert.</span>
+                </div>
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '7.5px', display: 'block' }}>HORIZ. PULL (H)</span>
+                  <strong style={{ color: '#38bdf8' }}>{loadCalc.horizontalTension_kN} kN</strong>
+                  <span style={{ color: '#64748b', fontSize: '7px', display: 'block' }}>lateral surge</span>
+                </div>
+                <div>
+                  <span style={{ color: '#64748b', fontSize: '7.5px', display: 'block' }}>VERT. LIFT (V)</span>
+                  <strong style={{ color: '#38bdf8' }}>{loadCalc.verticalTension_kN} kN</strong>
+                  <span style={{ color: '#64748b', fontSize: '7px', display: 'block' }}>axial uplift</span>
+                </div>
+              </div>
+
+              {/* Strength Envelope: WLL vs MBL */}
+              <div style={{ fontSize: '8px', fontFamily: 'monospace' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8', marginBottom: '3px' }}>
+                  <span>WLL Limit: <strong style={{ color: '#cbd5e1' }}>{loadCalc.wll_kN} kN</strong> ({loadCalc.wllUtilization_percent}%)</span>
+                  <span>MBL Breaking: <strong style={{ color: '#cbd5e1' }}>{loadCalc.mbl_kN} kN</strong></span>
+                </div>
+                {/* Visual Gauge Bar */}
+                <div style={{ width: '100%', height: '5px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      width: `${Math.min(100, loadCalc.utilization_percent)}%`,
+                      height: '100%',
+                      background:
+                        loadCalc.utilization_percent > 75 ? '#ef4444' :
+                        loadCalc.utilization_percent > 35 ? '#f59e0b' :
+                        'linear-gradient(90deg, #06b6d4, #22d3ee)',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Action Button to switch right panel to Load & Tension Calculator */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelectMaterial?.(materialId);
                 }}
                 style={{
-                  background: 'rgba(34, 211, 238, 0.2)',
+                  background: 'rgba(34, 211, 238, 0.22)',
                   border: '1px solid #22d3ee',
                   borderRadius: '4px',
-                  padding: '5px',
+                  padding: '6px',
                   color: '#ffffff',
-                  fontSize: '8.5px',
+                  fontSize: '9px',
                   fontFamily: 'monospace',
                   fontWeight: 700,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '4px',
-                  marginTop: '2px',
+                  gap: '5px',
+                  marginTop: '1px',
                 }}
               >
-                <Activity size={10} /> VIEW IN LOAD CALCULATOR BOX →
+                <Activity size={11} /> VIEW FULL TENSION & LOAD ANALYSIS →
               </button>
             </div>
           )}

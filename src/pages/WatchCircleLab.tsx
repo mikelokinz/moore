@@ -8,6 +8,7 @@ import {
   type MooringConfig,
   type GPSTrailPoint,
   type WatchCircleDepthLevel,
+  type PhysicsEngineMode,
 } from '../components/watchcircle/watchCircleTypes';
 import {
   fetchLiveWatchCircleData,
@@ -61,11 +62,34 @@ export default function WatchCircleLab({ onExit, initialBuoyId = 'OMNI-BD10' }: 
   const [showUnderwater, setShowUnderwater] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
 
+  // Physics engine selection: 'rapier' (Rust WebAssembly) or 'kinematic' (Analytical ODE)
+  const [physicsEngine, setPhysicsEngine] = useState<PhysicsEngineMode>('rapier');
+
   // Camera preset command
   const [cameraPreset, setCameraPreset] = useState<'top' | 'surface' | 'profile' | 'anchor' | null>(null);
 
   // GPS Trajectory Breadcrumb Trail
   const [gpsTrail, setGpsTrail] = useState<GPSTrailPoint[]>([]);
+
+  // Prediction vs. Actual Toggle ('actual' by default)
+  const [telemetryMode, setTelemetryMode] = useState<'actual' | 'prediction'>('actual');
+
+  // Real-time camera heading tracked from 3D OrbitControls (for Bottom-Left Compass HUD)
+  const [cameraHeading, setCameraHeading] = useState<number>(0);
+
+  // Satellite AI Predicted Waypoint derived from live Digital Twin response
+  const predictedPos = useMemo(() => {
+    if (!livePackage?.response) return null;
+    const offset = livePackage.response.predicted_offset_m ?? 90;
+    const bearingDeg = livePackage.response.predicted_bearing_deg ?? 304.88;
+    const rad = (bearingDeg * Math.PI) / 180;
+    return {
+      x: offset * Math.sin(rad),
+      z: -offset * Math.cos(rad),
+      offsetMeters: offset,
+      bearingDeg,
+    };
+  }, [livePackage?.response]);
 
   // Function to pull live data for active station
   const loadLiveData = useCallback(async (buoyId: string, applyLive = true) => {
@@ -105,22 +129,46 @@ export default function WatchCircleLab({ onExit, initialBuoyId = 'OMNI-BD10' }: 
     let liveOverride = undefined;
     if (isLiveMode && livePackage?.response) {
       const dt = livePackage.response;
-      liveOverride = {
-        steadyExcursionMeters: dt.predicted_offset_m ?? undefined,
-        forceResultantAngle:
-          dt.predicted_bearing_deg != null
-            ? (dt.predicted_bearing_deg * Math.PI) / 180
-            : undefined,
-        fairleadTension_kN:
-          dt.fairlead_tension_n != null
-            ? Math.round((dt.fairlead_tension_n / 1000) * 10) / 10
-            : undefined,
-        anchorTension_kN:
-          dt.anchor_tension_n != null
-            ? Math.round((dt.anchor_tension_n / 1000) * 10) / 10
-            : undefined,
-        safetyFactor: dt.safety_factor ?? undefined,
-      };
+      if (telemetryMode === 'prediction') {
+        // Satellite AI Prediction mode: use the predicted offset, bearing, and tension forecasts
+        liveOverride = {
+          steadyExcursionMeters: dt.predicted_offset_m ?? undefined,
+          forceResultantAngle:
+            dt.predicted_bearing_deg != null
+              ? (dt.predicted_bearing_deg * Math.PI) / 180
+              : undefined,
+          fairleadTension_kN:
+            dt.fairlead_tension_n != null
+              ? Math.round((dt.fairlead_tension_n / 1000) * 10) / 10
+              : undefined,
+          anchorTension_kN:
+            dt.anchor_tension_n != null
+              ? Math.round((dt.anchor_tension_n / 1000) * 10) / 10
+              : undefined,
+          safetyFactor: dt.safety_factor ?? undefined,
+        };
+      } else {
+        // Live Telemetry mode: actual reported buoy GPS position and measured hardware tension
+        const dLat = (livePackage.latitude ?? config.nominalLatitude) - config.nominalLatitude;
+        const dLon = (livePackage.longitude ?? config.nominalLongitude) - config.nominalLongitude;
+        const mLat = dLat * 111320;
+        const mLon = dLon * 111320 * Math.cos((config.nominalLatitude * Math.PI) / 180);
+        const actualDist = Math.sqrt(mLon * mLon + mLat * mLat);
+
+        liveOverride = {
+          steadyExcursionMeters: actualDist > 4 ? actualDist : undefined,
+          forceResultantAngle: actualDist > 4 ? Math.atan2(mLon, mLat) : undefined,
+          fairleadTension_kN:
+            dt.fairlead_tension_n != null
+              ? Math.round((dt.fairlead_tension_n / 1000) * 10) / 10
+              : undefined,
+          anchorTension_kN:
+            dt.anchor_tension_n != null
+              ? Math.round((dt.anchor_tension_n / 1000) * 10) / 10
+              : undefined,
+          safetyFactor: dt.safety_factor ?? undefined,
+        };
+      }
     }
 
     const raw = calculateMooringPhysics(env, config, 0, liveOverride);
@@ -144,7 +192,7 @@ export default function WatchCircleLab({ onExit, initialBuoyId = 'OMNI-BD10' }: 
     }
 
     return raw;
-  }, [env, config, isLiveMode, livePackage]);
+  }, [env, config, isLiveMode, livePackage, telemetryMode]);
 
   // Gentle breadcrumb recording when excursion shifts or over time
   useEffect(() => {
@@ -188,65 +236,79 @@ export default function WatchCircleLab({ onExit, initialBuoyId = 'OMNI-BD10' }: 
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', background: '#020617', overflow: 'hidden' }}>
-      {/* ── 3D Scene Canvas ── */}
-      <WatchCircleScene
-        env={env}
-        config={config}
-        buoyState={physicsData.buoyState}
-        catenaryPoints={physicsData.catenaryPoints}
-        segments={physicsData.segments}
-        selectedSegmentIndex={selectedSegmentIndex}
-        onSelectSegment={setSelectedSegmentIndex}
-        selectedMaterialId={selectedMaterialId}
-        onSelectMaterial={setSelectedMaterialId}
-        gpsTrail={gpsTrail}
-        showBoundary={showBoundary}
-        showTrail={showTrail}
-        showExcursionVector={showExcursionVector}
-        showUnderwater={showUnderwater}
-        cameraPreset={cameraPreset}
-        onCameraPresetHandled={() => setCameraPreset(null)}
-        currentDepth={currentDepth}
-        onDepthChange={setCurrentDepth}
-      />
+      {/* ── 3D Scene Canvas (Isolated in Lower Stacking Context z-index: 1) ── */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+        <WatchCircleScene
+          env={env}
+          config={config}
+          buoyState={physicsData.buoyState}
+          catenaryPoints={physicsData.catenaryPoints}
+          segments={physicsData.segments}
+          selectedSegmentIndex={selectedSegmentIndex}
+          onSelectSegment={setSelectedSegmentIndex}
+          selectedMaterialId={selectedMaterialId}
+          onSelectMaterial={setSelectedMaterialId}
+          gpsTrail={gpsTrail}
+          showBoundary={showBoundary}
+          showTrail={showTrail}
+          showExcursionVector={showExcursionVector}
+          showUnderwater={showUnderwater}
+          cameraPreset={cameraPreset}
+          onCameraPresetHandled={() => setCameraPreset(null)}
+          currentDepth={currentDepth}
+          onDepthChange={setCurrentDepth}
+          onHeadingChange={setCameraHeading}
+          predictedPos={predictedPos}
+          isPredictionMode={telemetryMode === 'prediction'}
+          physicsEngine={physicsEngine}
+        />
+      </div>
 
-      {/* ── 2D Interactive Scientific HUD Dashboard ── */}
-      <WatchCircleHUD
-        env={env}
-        setEnv={setEnv}
-        config={config}
-        setConfig={setConfig}
-        buoyState={physicsData.buoyState}
-        segments={physicsData.segments}
-        selectedSegmentIndex={selectedSegmentIndex}
-        onSelectSegment={setSelectedSegmentIndex}
-        selectedMaterialId={selectedMaterialId}
-        onSelectMaterial={setSelectedMaterialId}
-        currentDepth={currentDepth}
-        onDepthChange={setCurrentDepth}
-        showBoundary={showBoundary}
-        setShowBoundary={setShowBoundary}
-        showTrail={showTrail}
-        setShowTrail={setShowTrail}
-        showExcursionVector={showExcursionVector}
-        setShowExcursionVector={setShowExcursionVector}
-        showUnderwater={showUnderwater}
-        setShowUnderwater={setShowUnderwater}
-        isPaused={isPaused}
-        setIsPaused={setIsPaused}
-        onClearTrail={() => setGpsTrail([])}
-        onResetCamera={handleResetCamera}
-        onSetCameraPreset={handleSetCameraPreset}
-        onExit={onExit}
-        isLiveMode={isLiveMode}
-        setIsLiveMode={setIsLiveMode}
-        liveLoading={liveLoading}
-        liveError={liveError}
-        livePackage={livePackage}
-        activeBuoyId={activeBuoyId}
-        onSelectBuoyId={handleSelectBuoyId}
-        onRefreshLive={() => loadLiveData(activeBuoyId, true)}
-      />
+      {/* ── 2D Interactive Scientific HUD Dashboard (Elevated in Foreground Stacking Context z-index: 50) ── */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 50, pointerEvents: 'none' }}>
+        <WatchCircleHUD
+          env={env}
+          setEnv={setEnv}
+          config={config}
+          setConfig={setConfig}
+          buoyState={physicsData.buoyState}
+          segments={physicsData.segments}
+          selectedSegmentIndex={selectedSegmentIndex}
+          onSelectSegment={setSelectedSegmentIndex}
+          selectedMaterialId={selectedMaterialId}
+          onSelectMaterial={setSelectedMaterialId}
+          currentDepth={currentDepth}
+          onDepthChange={setCurrentDepth}
+          physicsEngine={physicsEngine}
+          setPhysicsEngine={setPhysicsEngine}
+          showBoundary={showBoundary}
+          setShowBoundary={setShowBoundary}
+          showTrail={showTrail}
+          setShowTrail={setShowTrail}
+          showExcursionVector={showExcursionVector}
+          setShowExcursionVector={setShowExcursionVector}
+          showUnderwater={showUnderwater}
+          setShowUnderwater={setShowUnderwater}
+          isPaused={isPaused}
+          setIsPaused={setIsPaused}
+          onClearTrail={() => setGpsTrail([])}
+          onResetCamera={handleResetCamera}
+          onSetCameraPreset={handleSetCameraPreset}
+          onExit={onExit}
+          isLiveMode={isLiveMode}
+          setIsLiveMode={setIsLiveMode}
+          liveLoading={liveLoading}
+          liveError={liveError}
+          livePackage={livePackage}
+          activeBuoyId={activeBuoyId}
+          onSelectBuoyId={handleSelectBuoyId}
+          onRefreshLive={() => loadLiveData(activeBuoyId, true)}
+          telemetryMode={telemetryMode}
+          setTelemetryMode={setTelemetryMode}
+          cameraHeading={cameraHeading}
+          predictedPos={predictedPos}
+        />
+      </div>
     </div>
   );
 }

@@ -1,10 +1,11 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { MooringBuoy3D } from '../watchcircle/MooringBuoy3D';
 import { MooringLine3D } from '../watchcircle/MooringLine3D';
 import { SeabedEnvironment } from '../watchcircle/SeabedEnvironment';
+import { MooringPartCallout } from '../watchcircle/MooringPartCallout';
 import {
   calculateMooringPhysics,
   type EnvironmentalConditions,
@@ -241,6 +242,12 @@ export function ArgoBuoyMarker({ station, isDifference, waveParams }: ArgoBuoyMa
     });
   }, [env, config]);
 
+  // Interactive 3D component inspection state
+  const [inspectedPart, setInspectedPart] = useState<{
+    id: string;
+    worldPos: [number, number, number];
+  } | null>(null);
+
   return (
     <group>
       {/* ── Authentic 3D OMNI Mooring Buoy Riding Waves (Directly coupled to WaveSurface) ── */}
@@ -253,6 +260,9 @@ export function ArgoBuoyMarker({ station, isDifference, waveParams }: ArgoBuoyMa
         currentSpeed={station.currentSpeed || 0.4}
         liveMotionRef={liveMotionRef}
         waveParams={waveParams}
+        onInspectPart={(partId, worldPos) => {
+          setInspectedPart({ id: partId, worldPos });
+        }}
       />
 
       {/* ── Dynamic Physics Catenary Mooring Line (Elastic S-Loop, Trawl Float & Tackle) ── */}
@@ -261,6 +271,9 @@ export function ArgoBuoyMarker({ station, isDifference, waveParams }: ArgoBuoyMa
         buoyState={physicsData.buoyState}
         segments={physicsData.segments}
         liveMotionRef={liveMotionRef}
+        onInspectPart={(partId, worldPos) => {
+          setInspectedPart({ id: partId, worldPos });
+        }}
       />
 
       {/* ── Bathymetric Seabed Environment & Clump Weight Anchor Foundation ── */}
@@ -273,6 +286,18 @@ export function ArgoBuoyMarker({ station, isDifference, waveParams }: ArgoBuoyMa
 
       {/* ── Floating Station Identity Label ── */}
       <StationLabel station={station} liveMotionRef={liveMotionRef} />
+
+      {/* ── Interactive 3D Component Inspection Callout ── */}
+      {inspectedPart && (
+        <MooringPartCallout
+          partId={inspectedPart.id}
+          position={inspectedPart.worldPos}
+          env={env}
+          config={config}
+          buoyState={physicsData.buoyState}
+          onClose={() => setInspectedPart(null)}
+        />
+      )}
 
       {/* ── Optional Holographic Model Prediction Marker (Difference Mode) ── */}
       {isDifference && (

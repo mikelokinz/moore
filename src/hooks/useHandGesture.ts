@@ -176,10 +176,8 @@ function freshHandRefs(): PerHandRefs {
 // ═══ Hook ════════════════════════════════════════════════════════════════════
 // ═════════════════════════════════════════════════════════════════════════════
 export function useHandGesture() {
-  // ── React state (updated sparingly) ──────────────────────────────────────
+  // ── React state ──────────────────────────────────────────────────────────
   const [isEnabled, setIsEnabled] = useState(false);
-  const [isPaused, setIsPaused]   = useState(false);
-  const isPausedRef               = useRef(false);
   const [status, setStatus]       = useState<TrackingStatus>('disabled');
   const [gesture, setGesture]     = useState<GestureType>('none');
   const [confidence, setConfidence] = useState(0);
@@ -209,6 +207,22 @@ export function useHandGesture() {
   const streamRef     = useRef<MediaStream | null>(null);
   const rafRef        = useRef<number | null>(null);
   const lastTimeRef   = useRef<number>(0);
+
+  // Create permanent hidden video element to guarantee stream attachment
+  useEffect(() => {
+    if (!videoRef.current) {
+      const video = document.createElement('video');
+      video.playsInline = true;
+      video.muted = true;
+      video.autoplay = true;
+      video.style.display = 'none';
+      document.body.appendChild(video);
+      videoRef.current = video;
+      return () => {
+        if (video.parentNode) video.parentNode.removeChild(video);
+      };
+    }
+  }, []);
 
   // ── Two-hand tracking refs (updated every frame, NO setState) ───────────
   const leftHandRef  = useRef<HandState>({ ...EMPTY_HAND, handedness: 'Left' });
@@ -291,25 +305,44 @@ export function useHandGesture() {
     if (isEnabled && !landmarkerRef.current) {
       setStatus('loading');
       initMediaPipe();
+    } else if (isEnabled && landmarkerRef.current) {
+      setStatus('ready');
     }
 
     return () => {
       isCancelled = true;
-      if (landmarkerRef.current) { landmarkerRef.current.close(); landmarkerRef.current = null; }
     };
   }, [isEnabled]);
+
+  // Cleanup landmarker on unmount
+  useEffect(() => {
+    return () => {
+      if (landmarkerRef.current) {
+        landmarkerRef.current.close();
+        landmarkerRef.current = null;
+      }
+    };
+  }, []);
 
   // ═══ Camera Stream ═══════════════════════════════════════════════════════
   useEffect(() => {
     if (!isEnabled) {
-      if (streamRef.current) { streamRef.current.getTracks().forEach((t) => t.stop()); streamRef.current = null; }
-      if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
-      setTimeout(() => {
-        setStatus('disabled');
-        setGesture('none');
-        setConfidence(0);
-        setHandCount(0);
-      }, 0);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      setStatus('disabled');
+      setGesture('none');
+      setConfidence(0);
+      setHandCount(0);
+
       // Reset all tracking state
       leftHandRef.current  = { ...EMPTY_HAND, handedness: 'Left' };
       rightHandRef.current = { ...EMPTY_HAND, handedness: 'Right' };
@@ -345,8 +378,13 @@ export function useHandGesture() {
           audio: false,
         });
         streamRef.current = stream;
-        if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play(); setStatus('tracking'); }
-      } catch {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+          setStatus('tracking');
+        }
+      } catch (err) {
+        console.warn('Camera access denied or failed:', err);
         setStatus('permission_denied');
         setIsEnabled(false);
       }
@@ -354,7 +392,13 @@ export function useHandGesture() {
     startCamera();
 
     return () => {
-      if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [isEnabled]);
@@ -431,7 +475,7 @@ export function useHandGesture() {
           ctx.restore();
         }
 
-        const numDetected = isPausedRef.current ? 0 : (results.landmarks?.length ?? 0);
+        const numDetected = results.landmarks?.length ?? 0;
 
         // ────────────────────────────────────────────────────────────────
         // Phase 1: Classify each detected hand as Left or Right
@@ -745,17 +789,15 @@ export function useHandGesture() {
 
   // ═══ Public API ══════════════════════════════════════════════════════════
   const toggleEnabled = useCallback(() => {
-    setIsEnabled((prev) => {
-      if (!prev) {
-        setIsPaused(false);
-        isPausedRef.current = false;
-        return true;
-      }
-      const nextPaused = !isPausedRef.current;
-      isPausedRef.current = nextPaused;
-      setIsPaused(nextPaused);
-      return true;
-    });
+    setIsEnabled((prev) => !prev);
+  }, []);
+
+  const disable = useCallback(() => {
+    setIsEnabled(false);
+  }, []);
+
+  const enable = useCallback(() => {
+    setIsEnabled(true);
   }, []);
 
   const onClickEvent = useCallback((cb: () => void) => {
@@ -771,9 +813,11 @@ export function useHandGesture() {
   }, []);
 
   return {
-    isEnabled: isEnabled && !isPaused,
+    isEnabled,
     toggleEnabled,
-    status: isPaused ? 'disabled' : status,
+    disable,
+    enable,
+    status,
     gesture,
     confidence,
     videoRef,

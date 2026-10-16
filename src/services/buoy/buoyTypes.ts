@@ -10,6 +10,9 @@ export interface Telemetry {
 export interface BuoyLocation {
   id: string; name: string; type: string; latitude: number; longitude: number;
   status?: BuoyStatus; coordinateKind: string; metadataSource: string; metadataRetrievedAt?: string;
+  observationTimestamp?: string | null;
+  receivedAt?: string | null;
+  freshness?: { state: string; ageSeconds: number | null; lastSourceCheck?: string | null };
 }
 export interface BuoyDetail extends BuoyLocation {
   parameterAvailability?: Record<string, string>;

@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { X, Compass, CircleDot } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import type { BuoyLocation, Metric } from '../../services/buoy/buoyTypes';
 import { useBuoyTelemetry } from '../../services/buoy/useBuoyTelemetry';
+import { analyzeBuoyEEZ } from '../../utils/eezJurisdiction';
 import './BuoyDetailsPanel.css';
 
 const labels: Record<string, string> = {
@@ -227,13 +228,34 @@ export function BuoyDetailsPanel({
 }) {
   const { detail, history, historyStatus, loading, error, websocketStatus } = useBuoyTelemetry(buoy);
   const [now, setNow] = useState(() => Date.now());
+  const panelRef = useRef<HTMLElement>(null);
+
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 15000); return () => clearInterval(timer); }, []);
+
   useEffect(() => {
     if (!buoy) return;
     const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+    const handleOutsideClick = (e: Event) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      if (panelRef.current && panelRef.current.contains(target)) {
+        return;
+      }
+      onClose();
+    };
     window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
+    const timer = setTimeout(() => {
+      window.addEventListener('pointerdown', handleOutsideClick, { capture: true });
+      window.addEventListener('mousedown', handleOutsideClick, { capture: true });
+    }, 40);
+    return () => {
+      window.removeEventListener('keydown', closeOnEscape);
+      clearTimeout(timer);
+      window.removeEventListener('pointerdown', handleOutsideClick, { capture: true });
+      window.removeEventListener('mousedown', handleOutsideClick, { capture: true });
+    };
   }, [buoy, onClose]);
+
   if (!buoy) return null;
   const metadata = detail?.id === buoy.id ? detail : buoy;
   const timestamp = detail?.observationTimestamp;
@@ -244,7 +266,7 @@ export function BuoyDetailsPanel({
   const telemetry = detail?.telemetry;
   const paramAvail = detail?.parameterAvailability ?? {};
   const trendKeys = [['meteorology','airTemperature'],['meteorology','windSpeed'],['ocean','sst'],['waves','waveHeight'],['meteorology','pressure']] as const;
-  return <aside className="buoy-details" aria-label={`Details for ${buoy.id}`}>
+  return <aside ref={panelRef} className="buoy-details" aria-label={`Details for ${buoy.id}`}>
     <header><div><span className="buoy-eyebrow">OBSERVATION STATION</span><h2>{metadata.name}</h2></div>
       <button onClick={onClose} aria-label="Close buoy details"><X size={18}/></button></header>
     <div className={`buoy-state state-${freshness.toLowerCase().replace('_', '-')}`}><i/>{!timestamp && (loading || detail?.providerStatus === 'CONNECTING') ? 'CONNECTING…' : unavailable ? 'SOURCE UNAVAILABLE' : !timestamp ? 'WAITING FOR DATA' : freshness.replace(/_/g, ' ')}</div>
@@ -252,88 +274,102 @@ export function BuoyDetailsPanel({
     <p className="buoy-caption">LAST OBSERVATION · UTC<br/>{timestamp ? new Date(timestamp).toLocaleString('en-GB', {timeZone: 'UTC'}) : 'Not available'}</p>
     
     {/* 🌊 ACTION BUTTONS: 3D DIVE & WATCH CIRCLE ── */}
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px', marginBottom: '12px' }}>
-      {onOpenWatchCircle && (
-        <button
-          onClick={() => onOpenWatchCircle(metadata)}
-          style={{
-            width: '100%',
-            padding: '9px 12px',
-            background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.25) 0%, rgba(14, 116, 144, 0.5) 100%)',
-            border: '1px solid rgba(34, 211, 238, 0.7)',
-            borderRadius: '6px',
-            color: '#38bdf8',
-            fontFamily: 'monospace',
-            fontSize: '9.5px',
-            fontWeight: 700,
-            letterSpacing: '0.12em',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '7px',
-            boxShadow: '0 0 16px rgba(34, 211, 238, 0.25)',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34, 211, 238, 0.45) 0%, rgba(14, 116, 144, 0.7) 100%)';
-            (e.currentTarget as HTMLElement).style.borderColor = '#22d3ee';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34, 211, 238, 0.25) 0%, rgba(14, 116, 144, 0.5) 100%)';
-            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(34, 211, 238, 0.7)';
-          }}
-        >
-          <CircleDot size={13} color="#22d3ee" />
-          <span>MOORING WATCH CIRCLE (3D)</span>
-        </button>
-      )}
+    {(onOpenWatchCircle || onExploreOcean) && (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px', marginBottom: '12px' }}>
+        {onOpenWatchCircle && (
+          <button
+            onClick={() => onOpenWatchCircle(metadata)}
+            style={{
+              width: '100%',
+              padding: '9px 12px',
+              background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.25) 0%, rgba(14, 116, 144, 0.5) 100%)',
+              border: '1px solid rgba(34, 211, 238, 0.7)',
+              borderRadius: '6px',
+              color: '#38bdf8',
+              fontFamily: 'monospace',
+              fontSize: '9.5px',
+              fontWeight: 700,
+              letterSpacing: '0.12em',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '7px',
+              boxShadow: '0 0 16px rgba(34, 211, 238, 0.25)',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34, 211, 238, 0.45) 0%, rgba(14, 116, 144, 0.7) 100%)';
+              (e.currentTarget as HTMLElement).style.borderColor = '#22d3ee';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(34, 211, 238, 0.25) 0%, rgba(14, 116, 144, 0.5) 100%)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(34, 211, 238, 0.7)';
+            }}
+          >
+            <CircleDot size={13} color="#22d3ee" />
+            <span>MOORING WATCH CIRCLE (3D)</span>
+          </button>
+        )}
 
-      {onExploreOcean && (
-        <button
-          onClick={() => onExploreOcean(metadata)}
-          style={{
-            width: '100%',
-            padding: '8px 12px',
-            background: 'rgba(15, 23, 42, 0.75)',
-            border: '1px solid rgba(34, 211, 238, 0.35)',
-            borderRadius: '6px',
-            color: '#94a3b8',
-            fontFamily: 'monospace',
-            fontSize: '9px',
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '7px',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = 'rgba(34, 211, 238, 0.15)';
-            (e.currentTarget as HTMLElement).style.color = '#38bdf8';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.75)';
-            (e.currentTarget as HTMLElement).style.color = '#94a3b8';
-          }}
-        >
-          <Compass size={12} color="#38bdf8" />
-          <span>EXPLORE OCEAN AREA (3D DIVE)</span>
-        </button>
-      )}
-    </div>
+        {onExploreOcean && (
+          <button
+            onClick={() => onExploreOcean(metadata)}
+            style={{
+              width: '100%',
+              padding: '8px 12px',
+              background: 'rgba(15, 23, 42, 0.75)',
+              border: '1px solid rgba(34, 211, 238, 0.35)',
+              borderRadius: '6px',
+              color: '#94a3b8',
+              fontFamily: 'monospace',
+              fontSize: '9px',
+              fontWeight: 600,
+              letterSpacing: '0.12em',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '7px',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'rgba(34, 211, 238, 0.15)';
+              (e.currentTarget as HTMLElement).style.color = '#38bdf8';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = 'rgba(15, 23, 42, 0.75)';
+              (e.currentTarget as HTMLElement).style.color = '#94a3b8';
+            }}
+          >
+            <Compass size={12} color="#38bdf8" />
+            <span>EXPLORE OCEAN AREA (3D DIVE)</span>
+          </button>
+        )}
+      </div>
+    )}
     {loading && <div className="buoy-notice" role="status">Loading latest telemetry…</div>}
     {(error || detail?.error) && <div className="buoy-notice" role="alert"><strong>{timestamp ? 'SOURCE UNAVAILABLE · VALUES STALE' : 'SOURCE UNAVAILABLE'}</strong><span>Last known values are retained when available.</span></div>}
 
-    <section><h3>POSITION</h3><dl>
-      <div><dt>Latitude</dt><dd>{Math.abs(metadata.latitude).toFixed(6)}° {metadata.latitude < 0 ? 'S' : 'N'}</dd></div>
-      <div><dt>Longitude</dt><dd>{Math.abs(metadata.longitude).toFixed(6)}° {metadata.longitude < 0 ? 'W' : 'E'}</dd></div>
-      <div><dt>Deployment type</dt><dd>{metadata.type}</dd></div>
-      <div><dt>Status</dt><dd>{metadata.status ?? 'UNKNOWN'}</dd></div>
-      <div><dt>Data age</dt><dd>{age === null ? 'No observation' : dataAge(age)}</dd></div>
-    </dl><p className="buoy-caption">INCOIS {metadata.coordinateKind} coordinates · retrieved {metadata.metadataRetrievedAt}. Current GPS position is unavailable.</p></section>
+    {(() => {
+      const eez = analyzeBuoyEEZ(metadata);
+      return (
+        <section><h3>POSITION &amp; EEZ JURISDICTION</h3><dl>
+          <div><dt>Latitude</dt><dd>{Math.abs(metadata.latitude).toFixed(6)}° {metadata.latitude < 0 ? 'S' : 'N'}</dd></div>
+          <div><dt>Longitude</dt><dd>{Math.abs(metadata.longitude).toFixed(6)}° {metadata.longitude < 0 ? 'W' : 'E'}</dd></div>
+          <div><dt>EEZ Status</dt><dd>
+            <span style={{ color: eez.badgeColor, fontWeight: 700, fontFamily: 'monospace' }}>
+              {eez.inEEZ ? '● IN INDIA EEZ' : '🌐 HIGH SEAS'}
+            </span>
+            {!eez.inEEZ && eez.distanceToEEZBoundaryNM > 0 && ` (${eez.distanceToEEZBoundaryNM.toFixed(1)} NM off EEZ)`}
+          </dd></div>
+          <div><dt>Maritime Basin</dt><dd>{eez.subSector}</dd></div>
+          <div><dt>Deployment type</dt><dd>{metadata.type}</dd></div>
+          <div><dt>Status</dt><dd>{metadata.status ?? 'UNKNOWN'}</dd></div>
+          <div><dt>Data age</dt><dd>{age === null ? 'No observation' : dataAge(age)}</dd></div>
+        </dl><p className="buoy-caption">{eez.deploymentRationale} {eez.regulatoryRegime}.</p></section>
+      );
+    })()}
 
     {telemetry && <>
       <ParameterGroup title="METEOROLOGY" keys={metKeys} group="meteorology" metrics={telemetry.meteorology} paramAvail={paramAvail} />

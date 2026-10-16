@@ -16,21 +16,33 @@ export function computeWaveParams(
   waveHeight: number,
   modelWaveHeight: number,
   currentSpeed: number,
-  temperature: number
+  temperature: number,
+  currentDirection: number = 45,
+  isWatchCycle: boolean = false
 ): WaveParams {
   // Physical significant wave height scaling:
-  // Primary swell amplitude: A1 = waveHeight * 0.22
-  // Combined with 3 harmonic swell components (0.45, 0.30, 0.15),
-  // total peak-to-trough wave height equals exactly waveHeight (Hs)!
-  const amplitude = Math.max(0.18, (waveHeight || 1.5) * 0.22);
+  // For watch cycle view: display realistic, gentle, flowing surface swells and ripples
+  // unless triggered by specific heavy wave forecast data (>3.0m).
+  let effectiveWaveHeight = waveHeight || 1.4;
+  if (isWatchCycle) {
+    if (effectiveWaveHeight > 3.0) {
+      effectiveWaveHeight = 1.6 + (effectiveWaveHeight - 3.0) * 0.45;
+    } else {
+      effectiveWaveHeight = Math.max(0.35, Math.min(1.2, effectiveWaveHeight * 0.42));
+    }
+  }
+
+  const amplitude = Math.max(0.06, effectiveWaveHeight * (isWatchCycle ? 0.14 : 0.22));
 
   // Realistic ocean wavenumber (~19.6m swell wavelength for 2.4m buoy)
-  const frequency = 0.32;
+  const frequency = isWatchCycle ? 0.38 : 0.32;
   // Natural physical Gerstner steepness for rounded, rolling swells without distortion
-  const choppiness = 0.22;
+  const choppiness = isWatchCycle ? 0.16 : 0.22;
 
-  const angle = (currentSpeed || 0.4) * 0.5;
-  const direction = new THREE.Vector2(Math.cos(angle), Math.sin(angle)).normalize();
+  // Align physical 3D wave propagation vector with True North compass coordinates
+  // (North = -Z, East = +X, South = +Z, West = -X)
+  const currentRad = (currentDirection * Math.PI) / 180;
+  const direction = new THREE.Vector2(Math.sin(currentRad), -Math.cos(currentRad)).normalize();
 
   const tempNorm = Math.max(0, Math.min(1, ((temperature || 28) - 15) / 20));
   const deepColor = new THREE.Color().setHSL(0.55 - tempNorm * 0.05, 0.7, 0.08);

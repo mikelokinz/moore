@@ -15,7 +15,7 @@ export interface MaterialLoadCalculation {
   depthRange_m: [number, number];
   mbl_kN: number;              // Minimum Breaking Load
   wll_kN: number;              // Working Load Limit (MBL / 3.0)
-  workingTension_kN: number;   // Dynamic Working Load
+  workingTension_kN: number;   // Dynamic Working Tensile Load
   workingTension_kgf: number;  // Tension in kgf
   workingTension_lbf: number;  // Tension in lbf
   utilization_percent: number; // (T / MBL) * 100
@@ -30,6 +30,18 @@ export interface MaterialLoadCalculation {
   status: 'SAFE' | 'WARNING' | 'CRITICAL';
   recommendation: string;
   standardsNote: string;
+
+  // ── Explicit Deep Physical Tension Telemetry ──
+  staticPretension_kN: number;         // Hydrostatic static equilibrium tension (gravity + buoyant balance)
+  dynamicWaveTension_kN: number;       // 1st order wave dynamic heave/pitch tensile perturbation
+  horizontalTension_kN: number;        // In-line catenary horizontal pull H = T * sin(theta)
+  verticalTension_kN: number;          // Vertical gravitational/buoyant hanging component V = T * cos(theta)
+  catenaryAngle_deg: number;           // Line inclination relative to vertical (degrees)
+  peakSnapTension_kN: number;          // Peak transient snap shock load (DAF * T + wave crest surge)
+  minCycleTension_kN: number;          // Minimum wave trough cycle tension (detects slack risk)
+  tensionState: 'SLACK' | 'COMPLIANT' | 'NOMINAL' | 'ELEVATED' | 'CRITICAL_TAUT';
+  dynamicAmplificationFactor: number; // DAF = T_max / T_mean
+  wllUtilization_percent: number;      // (T / WLL) * 100 (utilization of safe allowable working limit)
 }
 
 export const MATERIAL_SPECS: Record<
@@ -257,7 +269,52 @@ export function calculateMaterialLoads(
     const totalSubmergedWeight_kN =
       Math.round(((spec.submergedWeight_N_m * spec.length_m) / 1000) * 10) / 10;
 
-    // 6. Status and Recommendations:
+    // 6. Explicit Dynamic Tension Profile & Vector Components:
+    const waveAmp = Math.max(0.2, env.waveHeight * 0.5);
+    const dynamicWaveTension_kN = Math.round((waveAmp * (id === 'upper_chain' ? 2.4 : id === 'inductive_cable' ? 1.9 : id === 'nylon_rope' ? 1.2 : 0.8)) * 10) / 10;
+    const staticPretension_kN = Math.round((fairleadTension_kN * 0.65 + (spec.submergedWeight_N_m > 0 ? 0 : Math.abs(spec.submergedWeight_N_m) * spec.length_m * 0.001 * 0.5)) * 10) / 10;
+
+    // Angle of tension relative to vertical at this segment
+    let catenaryAngle_deg = 12;
+    if (id === 'upper_chain') {
+      catenaryAngle_deg = Math.min(65, Math.max(8, Math.round(buoyState.excursionPercent * 0.45) + 6));
+    } else if (id === 'inductive_cable') {
+      catenaryAngle_deg = Math.min(45, Math.max(5, Math.round(buoyState.excursionPercent * 0.35) + 4));
+    } else if (id === 'nylon_rope') {
+      catenaryAngle_deg = Math.min(75, Math.max(18, Math.round(buoyState.excursionPercent * 0.65) + 22));
+    } else if (id === 'trawl_float') {
+      catenaryAngle_deg = Math.min(80, Math.max(25, Math.round(buoyState.excursionPercent * 0.70) + 26));
+    } else if (id === 'polypropylene_rope') {
+      catenaryAngle_deg = Math.min(60, Math.max(12, Math.round(buoyState.excursionPercent * 0.40) + 14));
+    } else if (id === 'glass_spheres' || id === 'acoustic_release') {
+      catenaryAngle_deg = Math.min(25, Math.max(3, Math.round(buoyState.excursionPercent * 0.18) + 4));
+    } else if (id === 'ground_chain') {
+      catenaryAngle_deg = Math.min(20, Math.max(2, Math.round(buoyState.excursionPercent * 0.14) + 3));
+    } else {
+      catenaryAngle_deg = Math.min(14, Math.max(1, Math.round(buoyState.excursionPercent * 0.10) + 1));
+    }
+
+    const rad = (catenaryAngle_deg * Math.PI) / 180;
+    const horizontalTension_kN = Math.round(totalWorkingTension_kN * Math.sin(rad) * 10) / 10;
+    const verticalTension_kN = Math.round(totalWorkingTension_kN * Math.cos(rad) * 10) / 10;
+
+    const dynamicAmplificationFactor = Math.round((1.08 + (env.waveHeight / 12) * 0.42) * 100) / 100;
+    const peakSnapTension_kN = Math.round(totalWorkingTension_kN * dynamicAmplificationFactor * 10) / 10;
+    const minCycleTension_kN = Math.max(0.1, Math.round((totalWorkingTension_kN - dynamicWaveTension_kN * 0.85) * 10) / 10);
+    const wllUtilization_percent = Math.min(100, Math.round((totalWorkingTension_kN / wll_kN) * 1000) / 10);
+
+    let tensionState: MaterialLoadCalculation['tensionState'] = 'NOMINAL';
+    if (totalWorkingTension_kN < 1.4) {
+      tensionState = 'SLACK';
+    } else if (utilization_percent >= 75 || safetyFactor < 2.0) {
+      tensionState = 'CRITICAL_TAUT';
+    } else if (utilization_percent >= 40 || safetyFactor < 3.0) {
+      tensionState = 'ELEVATED';
+    } else if (utilization_percent < 20) {
+      tensionState = 'COMPLIANT';
+    }
+
+    // 7. Status and Recommendations:
     let status: MaterialLoadCalculation['status'] = 'SAFE';
     let recommendation = 'Nominal tensile stress within DNV-OS-E301 allowable envelope.';
 
@@ -295,8 +352,77 @@ export function calculateMaterialLoads(
       status,
       recommendation,
       standardsNote: spec.standardsNote,
+
+      // ── Explicit Deep Physical Tension Telemetry ──
+      staticPretension_kN,
+      dynamicWaveTension_kN,
+      horizontalTension_kN,
+      verticalTension_kN,
+      catenaryAngle_deg,
+      peakSnapTension_kN,
+      minCycleTension_kN,
+      tensionState,
+      dynamicAmplificationFactor,
+      wllUtilization_percent,
     };
   });
 
   return results;
+}
+
+export interface MooringLineTensionProfile {
+  fairleadTension_kN: number;
+  fairleadAngle_deg: number;
+  fairleadSafetyFactor: number;
+  midspanTension_kN: number;
+  midspanAngle_deg: number;
+  midspanSafetyFactor: number;
+  anchorTension_kN: number;
+  anchorAngle_deg: number;
+  anchorHoldingSafetyFactor: number;
+  maxTension_kN: number;
+  overallStatus: 'SAFE' | 'WARNING' | 'CRITICAL';
+}
+
+/**
+ * Returns instantaneous tension values across primary key mooring line coordinates.
+ */
+export function getMooringLineTensionProfile(
+  buoyState: BuoyState,
+  env: EnvironmentalConditions,
+  config: MooringConfig
+): MooringLineTensionProfile {
+  const fairleadTension = Math.max(1.0, buoyState.fairleadTension_kN);
+  const anchorTension = Math.max(0.5, buoyState.anchorTension_kN);
+  const midspanTension = Math.round((fairleadTension * 0.76 + anchorTension * 0.24) * 10) / 10;
+
+  const fairleadAngle = Math.min(65, Math.max(8, Math.round(buoyState.excursionPercent * 0.45) + 6));
+  const midspanAngle = Math.min(75, Math.max(18, Math.round(buoyState.excursionPercent * 0.60) + 20));
+  const anchorAngle = Math.min(22, Math.max(2, Math.round(buoyState.excursionPercent * 0.14) + 3));
+
+  const fairleadSF = Math.round((config.mbl_kN / Math.max(0.1, fairleadTension)) * 10) / 10;
+  const midspanSF = Math.round((240 / Math.max(0.1, midspanTension)) * 10) / 10;
+  const anchorSF = Math.round((490 / Math.max(0.1, anchorTension)) * 10) / 10;
+
+  const maxTension = Math.max(fairleadTension, midspanTension, anchorTension);
+  let overallStatus: 'SAFE' | 'WARNING' | 'CRITICAL' = 'SAFE';
+  if (buoyState.status === 'BREACH' || fairleadSF < 2.0 || maxTension > config.mbl_kN * 0.75) {
+    overallStatus = 'CRITICAL';
+  } else if (buoyState.status === 'WARNING' || fairleadSF < 3.0 || maxTension > config.mbl_kN * 0.40) {
+    overallStatus = 'WARNING';
+  }
+
+  return {
+    fairleadTension_kN: fairleadTension,
+    fairleadAngle_deg: fairleadAngle,
+    fairleadSafetyFactor: fairleadSF,
+    midspanTension_kN: midspanTension,
+    midspanAngle_deg: midspanAngle,
+    midspanSafetyFactor: midspanSF,
+    anchorTension_kN: anchorTension,
+    anchorAngle_deg: anchorAngle,
+    anchorHoldingSafetyFactor: anchorSF,
+    maxTension_kN: maxTension,
+    overallStatus,
+  };
 }

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 export type WatchCircleDepthLevel = 0 | 10 | 50 | 100 | 500 | 1000 | 2500;
+export type PhysicsEngineMode = 'rapier' | 'kinematic';
 
 export interface EnvironmentalConditions {
   currentSpeed: number;     // 0 - 3 m/s
@@ -201,44 +202,92 @@ export function calculateMooringPhysics(
           config.watchCircleRadius * excursionRatio
         );
 
-  // 3. Dynamic Wave-Induced Orbital Motion (First-order heave, pitch, roll)
+  // 3. Tether Mechanics & Organic Random Wander (Upper-half mooring compliance)
+  // The upper-half mooring consists of synthetic lines (synthetic rope + compliant nylon)
+  // allowing organic multi-harmonic pseudo-random wander from sub-mesoscale eddies and vortex shedding.
+  const tWander = time * 0.08;
+  const maxWanderRadius = Math.min(config.watchCircleRadius * 0.16, 45.0);
+  const wanderX = maxWanderRadius * (
+    Math.sin(tWander * 0.42 + 1.2) * 0.52 +
+    Math.sin(tWander * 1.05 - 1.5) * 0.32 +
+    Math.cos(tWander * 1.95 + 2.1) * 0.16
+  );
+  const wanderZ = maxWanderRadius * (
+    Math.cos(tWander * 0.38 - 0.6) * 0.52 +
+    Math.cos(tWander * 0.98 + 1.2) * 0.32 +
+    Math.sin(tWander * 1.88 - 0.9) * 0.16
+  );
+
+  // Combine steady environmental drift with organic wander
+  // Coordinate system: East = +X, North = -Z, West = -X, South = +Z
+  const rawDriftX = steadyExcursionMeters * Math.sin(forceResultantAngle) + wanderX;
+  const rawDriftZ = -steadyExcursionMeters * Math.cos(forceResultantAngle) + wanderZ;
+  const rawDistance = Math.sqrt(rawDriftX * rawDriftX + rawDriftZ * rawDriftZ);
+  const driftBearing = Math.atan2(rawDriftX, -rawDriftZ);
+
+  // Non-linear catenary restoring tension:
+  // Inside the inner yellow circle (r <= watchCircleRadius), the buoy floats and wanders freely.
+  // As it approaches the perimeter, the upper compliant tether straightens, escalating restoring spring tension.
+  const rInner = config.watchCircleRadius;
+  const rOuter = config.watchCircleRadius * 1.30; // Outer red heavy-weather excursion limit
+  let restrainedRadius: number;
+
+  if (rawDistance <= rInner) {
+    // Normal conditions: Tether mechanics provide progressive non-linear spring stiffness
+    const tensionStiffness = Math.pow(rawDistance / rInner, 3.4) * 0.08;
+    restrainedRadius = rawDistance * (1.0 - tensionStiffness);
+  } else {
+    // Heavy waves / extreme weather: hydrodynamic drag pulls past inner boundary toward outer red limit
+    const excess = rawDistance - rInner;
+    const maxExcess = rOuter - rInner;
+    restrainedRadius = rInner + maxExcess * Math.tanh(excess / Math.max(1, maxExcess));
+  }
+
+  // 4. Dynamic Wave-Induced Orbital Motion (First-order heave, pitch, roll)
   const omega = (2 * Math.PI) / Math.max(4, env.wavePeriod);
   const waveAmp = env.waveHeight * 0.5;
 
   const dynamicX = waveAmp * 0.65 * Math.sin(waveForceRad) * Math.cos(omega * time);
-  const dynamicZ = waveAmp * 0.65 * Math.cos(waveForceRad) * Math.cos(omega * time);
+  const dynamicZ = -waveAmp * 0.65 * Math.cos(waveForceRad) * Math.cos(omega * time);
   const heaveY = waveAmp * Math.sin(omega * time * 1.05);
   const pitch = THREE.MathUtils.clamp((waveAmp / 12) * Math.sin(omega * time), -0.22, 0.22);
   const roll = THREE.MathUtils.clamp((waveAmp / 15) * Math.cos(omega * time * 0.95), -0.18, 0.18);
 
   // Total Horizontal Excursion in Real Meters
-  const totalExcursionX = steadyExcursionMeters * Math.sin(forceResultantAngle) + dynamicX;
-  const totalExcursionZ = steadyExcursionMeters * Math.cos(forceResultantAngle) + dynamicZ;
+  const totalExcursionX = restrainedRadius * Math.sin(driftBearing) + dynamicX;
+  const totalExcursionZ = -restrainedRadius * Math.cos(driftBearing) + dynamicZ;
   const excursionDistance = Math.sqrt(totalExcursionX * totalExcursionX + totalExcursionZ * totalExcursionZ);
-  const excursionAngle = ((Math.atan2(totalExcursionX, totalExcursionZ) * 180) / Math.PI + 360) % 360;
+  // True North Bearing: North is -Z (0°), East is +X (90°), South is +Z (180°), West is -X (270°)
+  const excursionAngle = ((Math.atan2(totalExcursionX, -totalExcursionZ) * 180) / Math.PI + 360) % 360;
 
-  // Real Geodesic Latitude / Longitude
+  // Real Geodesic Latitude / Longitude (North = negative Z)
   const metersPerDegLat = 111320;
   const metersPerDegLon = 111320 * Math.cos((config.nominalLatitude * Math.PI) / 180);
-  const currentLat = config.nominalLatitude + totalExcursionZ / metersPerDegLat;
+  const currentLat = config.nominalLatitude - totalExcursionZ / metersPerDegLat;
   const currentLon = config.nominalLongitude + totalExcursionX / metersPerDegLon;
 
-  // Watch Circle Status Check: excursion <= watchCircleRadius
+  // Watch Circle Status Check:
+  // Inner Circle (Yellow) = Primary perimeter (100% of watchCircleRadius)
+  // Outer Circle (Red) = Max excursion / heavy weather boundary (130% of watchCircleRadius)
   const excursionPercent = Math.round((excursionDistance / config.watchCircleRadius) * 100);
   let status: 'NORMAL' | 'WARNING' | 'BREACH' = 'NORMAL';
   if (excursionPercent > 100) {
-    status = 'BREACH';
+    status = 'BREACH'; // Outside Inner Yellow Circle, inside Outer Red Hazard Zone
   } else if (excursionPercent >= 80) {
-    status = 'WARNING';
+    status = 'WARNING'; // Approaching Inner Yellow Perimeter
   }
 
-  // 4. Line Tensions (Fairlead & Anchor) and Safety Factor (SF)
-  // Fairlead pretension (assumed ~10% net buoyancy: ~2453 N) + dynamic hydrodynamic loads
+  // 5. Mooring Line Tension & Structural Load Prediction
+  // Fairlead pretension + hydrodynamic drag + wave heave inertial dynamic surging
   const pretension_N = 2453.0;
   const horizontalTension_N = totalForce_N;
-  const verticalTension_N = pretension_N + (totalForce_N * 0.45) + (env.waveHeight * 1200);
+
+  // Heavy wave conditions (Hs > 3.0m) induce non-linear peak heave dynamic tension
+  const heavyWaveMultiplier = env.waveHeight > 3.0 ? 1.0 + (env.waveHeight - 3.0) * 0.35 : 1.0;
+  const dynamicWaveTension_N = Math.pow(Math.max(0.5, env.waveHeight), 1.45) * 1850.0 * heavyWaveMultiplier;
+  const verticalTension_N = pretension_N + (totalForce_N * 0.42) + dynamicWaveTension_N;
   const fairleadTension_N = Math.sqrt(horizontalTension_N * horizontalTension_N + verticalTension_N * verticalTension_N);
-  const anchorTension_N = fairleadTension_N * 0.86;
+  const anchorTension_N = fairleadTension_N * 0.84;
 
   const fairleadTension_kN =
     liveOverride?.fairleadTension_kN != null
